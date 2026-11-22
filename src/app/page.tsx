@@ -8,6 +8,8 @@ import { listModels } from "@/server/services/models";
 import { ModelsQuerySchema } from "@/lib/validators";
 import { HomeClient } from "@/components/home/HomeClient";
 
+export const revalidate = 300;
+
 export default async function HomePage() {
   const [stats, facets, modelsResult] = await Promise.all([
     getStats(),

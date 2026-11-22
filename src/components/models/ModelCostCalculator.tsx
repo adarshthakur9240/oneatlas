@@ -57,9 +57,9 @@ export function ModelCostCalculator({
         <div className="flex items-center gap-2.5">
           <Calculator className="w-5 h-5 text-accent-warn" />
           <div>
-            <h3 className="font-serif text-xl font-normal text-text">
+            <h2 className="font-serif text-xl font-normal text-text">
               Interactive Cost Calculator
-            </h3>
+            </h2>
             <p className="text-xs text-muted mt-0.5">
               Estimate monthly infrastructure expense for {modelName} across endpoints
             </p>
@@ -72,14 +72,16 @@ export function ModelCostCalculator({
         {/* Input Tokens */}
         <div className="space-y-2">
           <div className="flex justify-between items-center text-xs font-mono">
-            <span className="text-muted uppercase tracking-wider text-[11px]">
+            <label htmlFor="input-tokens-num" className="text-muted uppercase tracking-wider text-[11px] cursor-pointer">
               Input Tokens / Req
-            </span>
+            </label>
             <input
+              id="input-tokens-num"
               type="number"
               min={1}
               max={1000000}
               value={inputTokens}
+              aria-label="Input tokens per request"
               onChange={(e) => setInputTokens(Math.max(1, Number(e.target.value)))}
               className="w-24 px-2 py-1 text-right text-xs font-mono font-medium bg-surface-raised border border-border rounded-md text-text outline-none focus:border-border-strong"
             />
@@ -90,6 +92,7 @@ export function ModelCostCalculator({
             max={32000}
             step={100}
             value={inputTokens}
+            aria-label="Input tokens slider"
             onChange={(e) => setInputTokens(Number(e.target.value))}
             className="w-full accent-[#e5dfd2] cursor-pointer"
           />
@@ -98,14 +101,16 @@ export function ModelCostCalculator({
         {/* Output Tokens */}
         <div className="space-y-2">
           <div className="flex justify-between items-center text-xs font-mono">
-            <span className="text-muted uppercase tracking-wider text-[11px]">
+            <label htmlFor="output-tokens-num" className="text-muted uppercase tracking-wider text-[11px] cursor-pointer">
               Output Tokens / Req
-            </span>
+            </label>
             <input
+              id="output-tokens-num"
               type="number"
               min={1}
               max={128000}
               value={outputTokens}
+              aria-label="Output tokens per request"
               onChange={(e) => setOutputTokens(Math.max(1, Number(e.target.value)))}
               className="w-24 px-2 py-1 text-right text-xs font-mono font-medium bg-surface-raised border border-border rounded-md text-text outline-none focus:border-border-strong"
             />
@@ -116,6 +121,7 @@ export function ModelCostCalculator({
             max={8000}
             step={50}
             value={outputTokens}
+            aria-label="Output tokens slider"
             onChange={(e) => setOutputTokens(Number(e.target.value))}
             className="w-full accent-[#e5dfd2] cursor-pointer"
           />
@@ -124,15 +130,17 @@ export function ModelCostCalculator({
         {/* Requests per Month */}
         <div className="space-y-2">
           <div className="flex justify-between items-center text-xs font-mono">
-            <span className="text-muted uppercase tracking-wider text-[11px]">
+            <label htmlFor="requests-num" className="text-muted uppercase tracking-wider text-[11px] cursor-pointer">
               Requests / Month
-            </span>
+            </label>
             <input
+              id="requests-num"
               type="number"
               min={1000}
               max={10000000}
               step={1000}
               value={requestsPerMonth}
+              aria-label="Requests per month"
               onChange={(e) =>
                 setRequestsPerMonth(Math.max(1, Number(e.target.value)))
               }
@@ -145,6 +153,7 @@ export function ModelCostCalculator({
             max={1000000}
             step={10000}
             value={requestsPerMonth}
+            aria-label="Monthly requests slider"
             onChange={(e) => setRequestsPerMonth(Number(e.target.value))}
             className="w-full accent-[#e5dfd2] cursor-pointer"
           />
@@ -167,6 +176,7 @@ export function ModelCostCalculator({
             step={5}
             disabled={!hasCachePricing}
             value={cacheHitPercent}
+            aria-label="Prompt cache hit rate percentage"
             onChange={(e) => setCacheHitPercent(Number(e.target.value))}
             className={`w-full accent-[#8fc49a] cursor-pointer ${
               !hasCachePricing ? "opacity-30 cursor-not-allowed" : ""

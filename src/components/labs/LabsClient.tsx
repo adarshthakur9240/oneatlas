@@ -80,30 +80,37 @@ export function LabsClient({ initialLabs }: LabsClientProps) {
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
         {/* Search Input */}
         <div className="relative flex-1 max-w-md">
-          <Search className="w-4 h-4 text-muted absolute left-3 top-1/2 -translate-y-1/2" />
+          <Search className="w-4 h-4 text-muted absolute left-3 top-1/2 -translate-y-1/2" aria-hidden="true" />
           <input
             type="text"
             value={query}
             onChange={(e) => handleSearchChange(e.target.value)}
             placeholder="Search AI labs by name or country..."
+            aria-label="Search AI labs by name or country"
             className="w-full pl-9 pr-4 py-2 bg-surface text-text placeholder:text-muted/60 text-xs font-mono border border-border rounded-[10px] outline-none focus:border-border-strong"
           />
         </div>
 
-        {/* Sort Select */}
-        <div className="flex items-center gap-2 self-end sm:self-auto text-xs font-mono">
-          <span className="text-muted uppercase tracking-wider text-[11px]">Sort:</span>
-          <select
-            value={sortParam}
-            onChange={(e) => handleSortChange(e.target.value)}
-            className="bg-surface text-text border border-border rounded-[8px] px-2.5 py-1.5 outline-none cursor-pointer"
-          >
-            <option value="models_desc">Most Models</option>
-            <option value="models_asc">Fewest Models</option>
-            <option value="name_asc">Name (A-Z)</option>
-            <option value="open_desc">Most Open Weights</option>
-            <option value="score_desc">Highest Avg Intelligence</option>
-          </select>
+        {/* Count & Sort Select */}
+        <div className="flex items-center gap-4 self-end sm:self-auto text-xs font-mono">
+          <span className="text-muted tabular-nums" aria-live="polite">
+            <span className="text-text font-bold">{filtered.length}</span> {filtered.length === 1 ? "lab" : "labs"}
+          </span>
+          <div className="flex items-center gap-2">
+            <span className="text-muted uppercase tracking-wider text-[11px]">Sort:</span>
+            <select
+              value={sortParam}
+              onChange={(e) => handleSortChange(e.target.value)}
+              aria-label="Sort labs"
+              className="bg-surface text-text border border-border rounded-[8px] px-2.5 py-1.5 outline-none cursor-pointer"
+            >
+              <option value="models_desc">Most Models</option>
+              <option value="models_asc">Fewest Models</option>
+              <option value="name_asc">Name (A-Z)</option>
+              <option value="open_desc">Most Open Weights</option>
+              <option value="score_desc">Highest Avg Intelligence</option>
+            </select>
+          </div>
         </div>
       </div>
 

@@ -19,25 +19,27 @@ export async function generateMetadata({
   params,
 }: LabPageProps): Promise<Metadata> {
   const { slug } = await params;
+  let lab;
   try {
-    const lab = await getLabBySlug(slug);
-    const title = `${lab.name} AI Models & Releases | OneAtlas`;
-    const description = `Explore ${lab.name}'s AI model portfolio (${lab.models.length} models), release timeline, open-weights, and pricing benchmarks on OneAtlas.`;
+    lab = await getLabBySlug(slug);
+  } catch (err) {
+    if (err instanceof NotFoundError) {
+      notFound();
+    }
+    throw err;
+  }
 
-    return {
+  const title = `${lab.name} AI Models & Releases | OneAtlas`;
+  const description = `Explore ${lab.name}'s AI model portfolio (${lab.models.length} models), release timeline, open-weights, and pricing benchmarks on OneAtlas.`;
+
+  return {
+    title,
+    description,
+    openGraph: {
       title,
       description,
-      openGraph: {
-        title,
-        description,
-      },
-    };
-  } catch {
-    return {
-      title: "Lab Not Found | OneAtlas",
-      description: "The requested AI research lab was not found.",
-    };
-  }
+    },
+  };
 }
 
 export default async function LabPage({ params }: LabPageProps) {

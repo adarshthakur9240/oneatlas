@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/Button";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { Award, ArrowRight, ShieldCheck, Scale, FileCode, CheckCircle2 } from "lucide-react";
 
+export const revalidate = 300;
+
 export const metadata: Metadata = {
   title: "AI Benchmarks & Evaluation Methodology | OneAtlas",
   description:

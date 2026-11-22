@@ -7,6 +7,8 @@ import { listProviders } from "@/server/services/providers";
 import { ProvidersClient } from "@/components/providers/ProvidersClient";
 import { Layers } from "lucide-react";
 
+export const revalidate = 300;
+
 export const metadata: Metadata = {
   title: "AI Inference Providers & APIs | OneAtlas",
   description:

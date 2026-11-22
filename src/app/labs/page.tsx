@@ -7,6 +7,8 @@ import { listLabs } from "@/server/services/labs";
 import { LabsClient } from "@/components/labs/LabsClient";
 import { Cpu } from "lucide-react";
 
+export const revalidate = 300;
+
 export const metadata: Metadata = {
   title: "AI Research Labs & Creators | OneAtlas",
   description:

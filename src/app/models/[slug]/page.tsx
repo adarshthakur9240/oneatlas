@@ -24,38 +24,40 @@ export async function generateMetadata({
   params,
 }: ModelPageProps): Promise<Metadata> {
   const { slug } = await params;
+  let model;
   try {
-    const model = await getModelBySlug(slug);
-    const titleName = displayName(model);
-    const labName = model.lab.name;
-    const priceText =
-      model.minInputPrice !== null && model.minOutputPrice !== null
-        ? `${formatPrice(model.minInputPrice)}/${formatPrice(model.minOutputPrice)} per 1M`
-        : "Unpriced";
+    model = await getModelBySlug(slug);
+  } catch (err) {
+    if (err instanceof NotFoundError) {
+      notFound();
+    }
+    throw err;
+  }
 
-    const title = `${titleName} by ${labName} — Specs, Pricing & Benchmarks | OneAtlas`;
-    const description = `Compare ${titleName} (${labName}) inference endpoints across ${model.providerCount} providers. Pricing: ${priceText}, Context: ${formatContext(model.contextWindow)}. Benchmarks, latency & quickstart snippets.`;
+  const titleName = displayName(model);
+  const labName = model.lab.name;
+  const priceText =
+    model.minInputPrice !== null && model.minOutputPrice !== null
+      ? `${formatPrice(model.minInputPrice)}/${formatPrice(model.minOutputPrice)} per 1M`
+      : "Unpriced";
 
-    return {
+  const title = `${titleName} by ${labName} — Specs, Pricing & Benchmarks | OneAtlas`;
+  const description = `Compare ${titleName} (${labName}) inference endpoints across ${model.providerCount} providers. Pricing: ${priceText}, Context: ${formatContext(model.contextWindow)}. Benchmarks, latency & quickstart snippets.`;
+
+  return {
+    title,
+    description,
+    openGraph: {
       title,
       description,
-      openGraph: {
-        title,
-        description,
-        type: "article",
-      },
-      twitter: {
-        card: "summary_large_image",
-        title,
-        description,
-      },
-    };
-  } catch {
-    return {
-      title: "Model Not Found | OneAtlas",
-      description: "The requested AI model was not found in the OneAtlas catalog.",
-    };
-  }
+      type: "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
+  };
 }
 
 export default async function ModelPage({ params }: ModelPageProps) {

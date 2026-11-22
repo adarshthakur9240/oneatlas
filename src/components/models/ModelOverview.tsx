@@ -29,7 +29,7 @@ export function ModelOverview({ model }: ModelOverviewProps) {
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
       {/* Left: Description */}
       <div className="lg:col-span-7 space-y-4">
-        <h3 className="font-serif text-xl font-normal text-text">Overview</h3>
+        <h2 className="font-serif text-xl font-normal text-text">Overview</h2>
         <div className="text-sm text-muted leading-relaxed font-sans relative">
           <p className={!expanded && isLong ? "line-clamp-4" : ""}>
             {description}
@@ -48,9 +48,9 @@ export function ModelOverview({ model }: ModelOverviewProps) {
 
       {/* Right: Technical Specifications */}
       <div className="lg:col-span-5 bg-surface border border-border rounded-[16px] p-5 space-y-4 select-none">
-        <h4 className="text-xs font-mono tracking-wider uppercase text-muted">
+        <h3 className="text-xs font-mono tracking-wider uppercase text-muted">
           Specifications &amp; Capabilities
-        </h4>
+        </h3>
 
         {/* Spec Rows */}
         <div className="space-y-2.5 text-xs font-mono border-b border-border pb-4">

@@ -209,7 +209,10 @@ export function RankingsClient() {
         </div>
 
         {/* Honest Citation Banner */}
-        <div className="p-4 bg-surface border border-border rounded-xl flex items-start sm:items-center justify-between gap-4 text-xs font-mono text-muted">
+        <div
+          className="p-4 bg-surface border border-border rounded-xl flex items-start sm:items-center justify-between gap-4 text-xs font-mono text-muted"
+          aria-live="polite"
+        >
           <div className="flex items-center gap-2.5">
             <Info className="w-4 h-4 text-accent-warn shrink-0" />
             <span>

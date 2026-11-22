@@ -20,25 +20,27 @@ export async function generateMetadata({
   params,
 }: ProviderPageProps): Promise<Metadata> {
   const { slug } = await params;
+  let provider;
   try {
-    const provider = await getProviderBySlug(slug);
-    const title = `${provider.name} Inference Hosting & Model Endpoints | OneAtlas`;
-    const description = `Inspect ${provider.name}'s ${provider.hostedModelCount} hosted model endpoints, pricing, latency, and throughput on OneAtlas.`;
+    provider = await getProviderBySlug(slug);
+  } catch (err) {
+    if (err instanceof NotFoundError) {
+      notFound();
+    }
+    throw err;
+  }
 
-    return {
+  const title = `${provider.name} Inference Hosting & Model Endpoints | OneAtlas`;
+  const description = `Inspect ${provider.name}'s ${provider.hostedModelCount} hosted model endpoints, pricing, latency, and throughput on OneAtlas.`;
+
+  return {
+    title,
+    description,
+    openGraph: {
       title,
       description,
-      openGraph: {
-        title,
-        description,
-      },
-    };
-  } catch {
-    return {
-      title: "Provider Not Found | OneAtlas",
-      description: "The requested inference host was not found in the catalog.",
-    };
-  }
+    },
+  };
 }
 
 export default async function ProviderPage({ params }: ProviderPageProps) {

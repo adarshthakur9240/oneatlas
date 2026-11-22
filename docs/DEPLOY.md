@@ -59,3 +59,62 @@ To handle serverless compute wake-up and pooler idle connection closures:
 - **Health Check Observability (`/api/health`)**:
   - Pings the database with `SELECT 1` and returns latency in milliseconds.
   - If latency exceeds 1,500ms, the response includes `coldStartSuspected: true` (`"db.coldStartSuspected": true`) to distinguish normal operation from serverless wake-up latency.
+
+---
+
+## 4. Vercel Deployment Runbook (Step-by-Step)
+
+### Step 1: Project Setup & Region Configuration
+1. Import repository into Vercel.
+2. Ensure `vercel.json` is located in the repo root:
+   ```json
+   {
+     "regions": ["sin1"]
+   }
+   ```
+   *Rationale:* Neon's AWS region is `aws-ap-southeast-1` (Singapore). Colocating serverless functions in Vercel's `sin1` region eliminates ~200ms intercontinental round-trip network latency on every database transaction.
+
+### Step 2: Environment Variables
+Configure the following in Vercel **Project Settings > Environment Variables**:
+- `DATABASE_URL`: The Neon **pooled** connection string with `-pooler` host (`?sslmode=require&connect_timeout=15&pool_timeout=20`).
+- `DIRECT_URL`: The Neon **direct** connection string without `-pooler` (required by Prisma CLI).
+- `NEXT_PUBLIC_APP_URL`: Production domain URL, e.g. `https://oneatlas.dev` (used for `metadataBase`, OpenGraph URLs, and sitemap generation).
+- `OPENROUTER_API_KEY`: *(Optional)* OpenRouter token if running periodic live catalog refreshes.
+
+### Step 3: Build & Migration Command
+In Vercel **Project Settings > General > Build & Development Settings**:
+- **Build Command**: `npm run build`
+  - In `package.json`, this is configured as: `prisma generate && next build`.
+- **Database Migrations Strategy**:
+  - Run database migrations before promoting a deployment:
+    ```bash
+    npx prisma migrate deploy
+    ```
+  - In GitHub Actions CI/CD or Vercel Deploy Hook, run `prisma migrate deploy` against `DIRECT_URL`. Never run data seeds in production deployments.
+
+### Step 4: Health Check & Verification
+Post-deployment, assert system integrity:
+```bash
+curl -i https://oneatlas.dev/api/health
+```
+Expected output:
+```json
+{
+  "status": "ok",
+  "version": "0.1.0",
+  "checks": {
+    "database": {
+      "status": "up",
+      "latencyMs": 14,
+      "coldStartSuspected": false
+    }
+  }
+}
+```
+
+### Step 5: Instant Rollback Strategy
+If a deployment exhibits regressions:
+1. Navigate to **Vercel Dashboard > Deployments**.
+2. Identify the previous stable deployment hash.
+3. Click **Instant Rollback**.
+4. Since database migrations maintain backward compatibility (no destructive column drops without deprecation phases), the prior build functions without database downtime.

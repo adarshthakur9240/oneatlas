@@ -31,7 +31,18 @@ async function testPage(
     const durationMs = Math.round(performance.now() - start);
     const html = await res.text();
 
-    const statusMatch = res.status === expectedStatus;
+    // In Next.js streaming with loading.tsx, notFound() streams the 404 boundary
+    const isStreamed404 =
+      expectedStatus === 404 &&
+      (res.status === 404 ||
+        (res.status === 200 &&
+          (html.includes("NEXT_HTTP_ERROR_FALLBACK;404") ||
+            html.includes("Model not found") ||
+            html.includes("Lab not found") ||
+            html.includes("Provider not found") ||
+            html.includes("Page not found"))));
+
+    const statusMatch = res.status === expectedStatus || isStreamed404;
     const contentMatch = contentCheck ? contentCheck(html) : true;
 
     if (!statusMatch) {
