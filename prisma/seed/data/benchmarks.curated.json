@@ -1,0 +1,155 @@
+[
+  {
+    "sourceId": "openai/gpt-4o",
+    "benchmarks": {
+      "mmlu-pro": { "score": 74.4, "sourceUrl": "https://openai.com/index/hello-gpt-4o/", "evaluatedAt": "2024-05-13", "isVendorReported": true },
+      "gpqa-diamond": { "score": 53.6, "sourceUrl": "https://openai.com/index/hello-gpt-4o/", "evaluatedAt": "2024-05-13", "isVendorReported": true },
+      "swe-bench-verified": { "score": 33.2, "sourceUrl": "https://www.swebench.com/", "evaluatedAt": "2024-05-13", "isVendorReported": false }
+    }
+  },
+  {
+    "sourceId": "anthropic/claude-opus-4",
+    "benchmarks": {
+      "swe-bench-verified": { "score": 79.4, "sourceUrl": "https://www.anthropic.com/research/claude-opus-4", "evaluatedAt": "2025-05-23", "isVendorReported": true },
+      "gpqa-diamond": { "score": 79.1, "sourceUrl": "https://www.anthropic.com/research/claude-opus-4", "evaluatedAt": "2025-05-23", "isVendorReported": true }
+    }
+  },
+  {
+    "sourceId": "anthropic/claude-sonnet-4",
+    "benchmarks": {
+      "swe-bench-verified": { "score": 72.7, "sourceUrl": "https://www.anthropic.com/research/claude-sonnet-4", "evaluatedAt": "2025-05-23", "isVendorReported": true },
+      "gpqa-diamond": { "score": 73.5, "sourceUrl": "https://www.anthropic.com/research/claude-sonnet-4", "evaluatedAt": "2025-05-23", "isVendorReported": true },
+      "mmlu-pro": { "score": 78.0, "sourceUrl": "https://www.anthropic.com/research/claude-sonnet-4", "evaluatedAt": "2025-05-23", "isVendorReported": true }
+    }
+  },
+  {
+    "sourceId": "anthropic/claude-3.7-sonnet",
+    "benchmarks": {
+      "swe-bench-verified": { "score": 70.3, "sourceUrl": "https://www.anthropic.com/news/claude-3-7-sonnet", "evaluatedAt": "2025-02-24", "isVendorReported": true },
+      "gpqa-diamond": { "score": 68.0, "sourceUrl": "https://www.anthropic.com/news/claude-3-7-sonnet", "evaluatedAt": "2025-02-24", "isVendorReported": true },
+      "mmlu-pro": { "score": 76.0, "sourceUrl": "https://www.anthropic.com/news/claude-3-7-sonnet", "evaluatedAt": "2025-02-24", "isVendorReported": true }
+    }
+  },
+  {
+    "sourceId": "anthropic/claude-3.5-sonnet",
+    "benchmarks": {
+      "swe-bench-verified": { "score": 49.0, "sourceUrl": "https://www.anthropic.com/news/claude-3-5-sonnet-20241022", "evaluatedAt": "2024-10-22", "isVendorReported": true },
+      "gpqa-diamond": { "score": 65.0, "sourceUrl": "https://www.anthropic.com/news/claude-3-5-sonnet-20241022", "evaluatedAt": "2024-10-22", "isVendorReported": true },
+      "mmlu-pro": { "score": 78.0, "sourceUrl": "https://www.anthropic.com/news/claude-3-5-sonnet-20241022", "evaluatedAt": "2024-10-22", "isVendorReported": true }
+    }
+  },
+  {
+    "sourceId": "google/gemini-2.5-pro",
+    "benchmarks": {
+      "mmlu-pro": { "score": 83.2, "sourceUrl": "https://deepmind.google/technologies/gemini/pro/", "evaluatedAt": "2025-03-25", "isVendorReported": true },
+      "gpqa-diamond": { "score": 84.0, "sourceUrl": "https://deepmind.google/technologies/gemini/pro/", "evaluatedAt": "2025-03-25", "isVendorReported": true },
+      "swe-bench-verified": { "score": 63.8, "sourceUrl": "https://deepmind.google/technologies/gemini/pro/", "evaluatedAt": "2025-03-25", "isVendorReported": true }
+    }
+  },
+  {
+    "sourceId": "google/gemini-2.5-flash",
+    "benchmarks": {
+      "mmlu-pro": { "score": 79.7, "sourceUrl": "https://deepmind.google/technologies/gemini/flash/", "evaluatedAt": "2025-05-20", "isVendorReported": true },
+      "gpqa-diamond": { "score": 78.0, "sourceUrl": "https://deepmind.google/technologies/gemini/flash/", "evaluatedAt": "2025-05-20", "isVendorReported": true },
+      "swe-bench-verified": { "score": 56.0, "sourceUrl": "https://deepmind.google/technologies/gemini/flash/", "evaluatedAt": "2025-05-20", "isVendorReported": true }
+    }
+  },
+  {
+    "sourceId": "openai/o3",
+    "benchmarks": {
+      "gpqa-diamond": { "score": 87.7, "sourceUrl": "https://openai.com/index/openai-o3-mini/", "evaluatedAt": "2025-04-16", "isVendorReported": true },
+      "swe-bench-verified": { "score": 71.7, "sourceUrl": "https://openai.com/index/openai-o3-mini/", "evaluatedAt": "2025-04-16", "isVendorReported": true },
+      "mmlu-pro": { "score": 87.3, "sourceUrl": "https://openai.com/index/openai-o3-mini/", "evaluatedAt": "2025-04-16", "isVendorReported": true }
+    }
+  },
+  {
+    "sourceId": "openai/o4-mini",
+    "benchmarks": {
+      "gpqa-diamond": { "score": 81.4, "sourceUrl": "https://openai.com/index/openai-o3-mini/", "evaluatedAt": "2025-04-16", "isVendorReported": true },
+      "swe-bench-verified": { "score": 68.1, "sourceUrl": "https://openai.com/index/openai-o3-mini/", "evaluatedAt": "2025-04-16", "isVendorReported": true }
+    }
+  },
+  {
+    "sourceId": "openai/gpt-4.1",
+    "benchmarks": {
+      "swe-bench-verified": { "score": 54.6, "sourceUrl": "https://openai.com/index/gpt-4-1/", "evaluatedAt": "2025-04-14", "isVendorReported": true },
+      "mmlu-pro": { "score": 72.8, "sourceUrl": "https://openai.com/index/gpt-4-1/", "evaluatedAt": "2025-04-14", "isVendorReported": true }
+    }
+  },
+  {
+    "sourceId": "meta-llama/llama-4-maverick",
+    "benchmarks": {
+      "mmlu-pro": { "score": 80.5, "sourceUrl": "https://ai.meta.com/blog/llama-4-multimodal-intelligence/", "evaluatedAt": "2025-04-05", "isVendorReported": true },
+      "gpqa-diamond": { "score": 69.8, "sourceUrl": "https://ai.meta.com/blog/llama-4-multimodal-intelligence/", "evaluatedAt": "2025-04-05", "isVendorReported": true }
+    }
+  },
+  {
+    "sourceId": "meta-llama/llama-4-scout",
+    "benchmarks": {
+      "mmlu-pro": { "score": 74.3, "sourceUrl": "https://ai.meta.com/blog/llama-4-multimodal-intelligence/", "evaluatedAt": "2025-04-05", "isVendorReported": true },
+      "gpqa-diamond": { "score": 57.2, "sourceUrl": "https://ai.meta.com/blog/llama-4-multimodal-intelligence/", "evaluatedAt": "2025-04-05", "isVendorReported": true }
+    }
+  },
+  {
+    "sourceId": "deepseek/deepseek-r1-0528",
+    "benchmarks": {
+      "mmlu-pro": { "score": 84.0, "sourceUrl": "https://arxiv.org/abs/2501.12948", "evaluatedAt": "2025-01-20", "isVendorReported": true },
+      "gpqa-diamond": { "score": 71.5, "sourceUrl": "https://arxiv.org/abs/2501.12948", "evaluatedAt": "2025-01-20", "isVendorReported": true },
+      "swe-bench-verified": { "score": 49.2, "sourceUrl": "https://arxiv.org/abs/2501.12948", "evaluatedAt": "2025-01-20", "isVendorReported": true },
+      "livecodebench": { "score": 65.9, "sourceUrl": "https://arxiv.org/abs/2501.12948", "evaluatedAt": "2025-01-20", "isVendorReported": true }
+    }
+  },
+  {
+    "sourceId": "deepseek/deepseek-chat",
+    "benchmarks": {
+      "mmlu-pro": { "score": 75.9, "sourceUrl": "https://arxiv.org/abs/2412.19437", "evaluatedAt": "2024-12-26", "isVendorReported": true },
+      "swe-bench-verified": { "score": 42.0, "sourceUrl": "https://arxiv.org/abs/2412.19437", "evaluatedAt": "2024-12-26", "isVendorReported": true },
+      "livecodebench": { "score": 43.4, "sourceUrl": "https://arxiv.org/abs/2412.19437", "evaluatedAt": "2024-12-26", "isVendorReported": true }
+    }
+  },
+  {
+    "sourceId": "mistralai/mistral-large",
+    "benchmarks": {
+      "mmlu-pro": { "score": 69.9, "sourceUrl": "https://mistral.ai/news/mistral-large-2407/", "evaluatedAt": "2024-07-24", "isVendorReported": true },
+      "gpqa-diamond": { "score": 51.9, "sourceUrl": "https://mistral.ai/news/mistral-large-2407/", "evaluatedAt": "2024-07-24", "isVendorReported": true }
+    }
+  },
+  {
+    "sourceId": "qwen/qwen3-235b-a22b-2507",
+    "benchmarks": {
+      "mmlu-pro": { "score": 79.3, "sourceUrl": "https://qwenlm.github.io/blog/qwen3/", "evaluatedAt": "2025-04-28", "isVendorReported": true },
+      "gpqa-diamond": { "score": 75.9, "sourceUrl": "https://qwenlm.github.io/blog/qwen3/", "evaluatedAt": "2025-04-28", "isVendorReported": true },
+      "livecodebench": { "score": 70.7, "sourceUrl": "https://qwenlm.github.io/blog/qwen3/", "evaluatedAt": "2025-04-28", "isVendorReported": true }
+    }
+  },
+  {
+    "sourceId": "qwen/qwen3-32b",
+    "benchmarks": {
+      "mmlu-pro": { "score": 79.5, "sourceUrl": "https://qwenlm.github.io/blog/qwen3/", "evaluatedAt": "2025-04-28", "isVendorReported": true },
+      "gpqa-diamond": { "score": 68.5, "sourceUrl": "https://qwenlm.github.io/blog/qwen3/", "evaluatedAt": "2025-04-28", "isVendorReported": true },
+      "livecodebench": { "score": 65.0, "sourceUrl": "https://qwenlm.github.io/blog/qwen3/", "evaluatedAt": "2025-04-28", "isVendorReported": true }
+    }
+  },
+  {
+    "sourceId": "qwen/qwen3-30b-a3b",
+    "benchmarks": {
+      "mmlu-pro": { "score": 72.4, "sourceUrl": "https://qwenlm.github.io/blog/qwen3/", "evaluatedAt": "2025-04-28", "isVendorReported": true },
+      "gpqa-diamond": { "score": 65.5, "sourceUrl": "https://qwenlm.github.io/blog/qwen3/", "evaluatedAt": "2025-04-28", "isVendorReported": true }
+    }
+  },
+  {
+    "sourceId": "x-ai/grok-3",
+    "benchmarks": {
+      "mmlu-pro": { "score": 79.9, "sourceUrl": "https://x.ai/blog/grok-3", "evaluatedAt": "2025-02-17", "isVendorReported": true },
+      "gpqa-diamond": { "score": 84.6, "sourceUrl": "https://x.ai/blog/grok-3", "evaluatedAt": "2025-02-17", "isVendorReported": true },
+      "livecodebench": { "score": 79.4, "sourceUrl": "https://x.ai/blog/grok-3", "evaluatedAt": "2025-02-17", "isVendorReported": true }
+    }
+  },
+  {
+    "sourceId": "x-ai/grok-3-mini",
+    "benchmarks": {
+      "gpqa-diamond": { "score": 79.5, "sourceUrl": "https://x.ai/blog/grok-3", "evaluatedAt": "2025-02-17", "isVendorReported": true },
+      "livecodebench": { "score": 79.6, "sourceUrl": "https://x.ai/blog/grok-3", "evaluatedAt": "2025-02-17", "isVendorReported": true }
+    }
+  }
+]
