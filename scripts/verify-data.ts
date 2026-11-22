@@ -119,7 +119,7 @@ async function main(): Promise<void> {
     `compositeScore is within [0, 100] for all scored models (${scoredModels.length} models checked)`
   );
 
-  // ── 6. No BenchmarkScore without sourceUrl ─────────────────────────────────
+  // ── 6. No BenchmarkScore without sourceUrl & valid ranges ─────────────────
   const missingSourceUrls = await prisma.benchmarkScore.count({
     where: {
       OR: [
@@ -131,6 +131,25 @@ async function main(): Promise<void> {
   assert(
     missingSourceUrls === 0,
     `No BenchmarkScore without valid sourceUrl (found ${missingSourceUrls})`
+  );
+
+  const allScoresWithBenchmark = await prisma.benchmarkScore.findMany({
+    include: { benchmark: { select: { slug: true, unit: true } } },
+  });
+  let outOfRangeScores = 0;
+  for (const s of allScoresWithBenchmark) {
+    if (s.score < 0 || isNaN(s.score)) {
+      outOfRangeScores++;
+    } else if (s.benchmark.slug === "arena-elo") {
+      if (s.score < 500 || s.score > 2000) outOfRangeScores++;
+    } else {
+      // 0-100% or 0-100 index benchmarks
+      if (s.score > 100) outOfRangeScores++;
+    }
+  }
+  assert(
+    outOfRangeScores === 0,
+    `All BenchmarkScore values within valid ranges (${allScoresWithBenchmark.length} scores checked, ${outOfRangeScores} violations)`
   );
 
   // ── 7. No orphan ModelProvider rows ────────────────────────────────────────
@@ -253,6 +272,22 @@ async function main(): Promise<void> {
       `  • ${m.sourceId.padEnd(38)} Composite: ${m.compositeScore?.toFixed(1).padStart(5)} | Intel: ${m.intelligenceScore?.toFixed(1).padStart(5) ?? "  N/A"} | Coding: ${m.codingScore?.toFixed(1).padStart(5) ?? "  N/A"}`
     );
   }
+
+  // ── Coverage Metric ───────────────────────────────────────────────────────
+  const listableModelsCount = await prisma.model.count({
+    where: { isDeprecated: false, providerCount: { gte: 1 } },
+  });
+  const scoredListableModelsCount = await prisma.model.count({
+    where: {
+      isDeprecated: false,
+      providerCount: { gte: 1 },
+      benchmarkScores: { some: {} },
+    },
+  });
+  console.log(
+    `\n📈 Benchmark Coverage: ${scoredListableModelsCount} of ${listableModelsCount} listable models have scores (${((scoredListableModelsCount / listableModelsCount) * 100).toFixed(1)}%)`
+  );
+
 
   console.log("\n==================================================");
   if (failed) {

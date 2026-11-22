@@ -132,7 +132,7 @@ export default async function BenchmarksPage() {
             </h3>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 font-sans text-xs text-muted leading-relaxed">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 font-sans text-xs text-muted leading-relaxed">
             <div className="space-y-2.5">
               <div className="flex items-center gap-2 text-text font-medium text-sm">
                 <ShieldCheck className="w-4 h-4 text-[#8fc49a]" />
@@ -159,7 +159,26 @@ export default async function BenchmarksPage() {
                 <span>Composite Intelligence Index</span>
               </div>
               <p>
-                A model&apos;s Composite Score is computed as the arithmetic mean of at least two verified normalized benchmark scores across general reasoning (MMLU-Pro / GPQA) and software engineering (SWE-bench / LiveCodeBench). Models with fewer than two benchmarks remain unranked.
+                A model&apos;s Composite Score is computed as the arithmetic mean of at least two verified normalized benchmark scores across general reasoning and software engineering. Models with fewer than two benchmarks remain unranked.
+              </p>
+            </div>
+
+            <div className="space-y-2.5">
+              <div className="flex items-center gap-2 text-text font-medium text-sm">
+                <Award className="w-4 h-4 text-[#e5dfd2]" />
+                <span>Data Provider Attribution</span>
+              </div>
+              <p>
+                Benchmark data:{" "}
+                <a
+                  href="https://artificialanalysis.ai/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-text underline hover:text-white transition-colors"
+                >
+                  Artificial Analysis
+                </a>
+                . Independent evaluation indices, latency, and throughput metrics are ingested under attribution terms.
               </p>
             </div>
           </div>

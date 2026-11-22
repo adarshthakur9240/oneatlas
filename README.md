@@ -41,7 +41,8 @@ Mapped 1:1 against the platform's core functional requirements:
   - Multi-model monthly cost projection widget highlighting the most economical model for a target workload.
   - Preset comparison scenarios (*Flagship Reasoners*, *Coding Champions*, *Open-Weights*, *Budget Fast*).
 - [x] **4. Verified Rankings & Pareto Frontier (`/rankings` & `/benchmarks`)**
-  - Empirical leaderboards for Composite Index, SWE-bench Verified, MMLU-Pro, GPQA Diamond, and LiveCodeBench.
+  - Empirical leaderboards for Composite Index, SWE-bench Verified, MMLU-Pro, GPQA Diamond, LiveCodeBench, and Artificial Analysis Intelligence Index.
+  - Benchmark data: [Artificial Analysis](https://artificialanalysis.ai/) independent evaluation indices, verified vendor-reported evaluations, and LMSYS Chatbot Arena.
   - Pareto Frontier 2D scatter plot (log-scale price vs benchmark score with stepped non-dominated boundary curve) identifying cost-performance sweet spots.
   - Honest disclosure banner highlighting scored vs unscored catalog coverage.
   - Evaluation standards catalog (`/benchmarks`) documenting testing methodologies, citation sources, and min-max score normalizations.
@@ -205,8 +206,9 @@ erDiagram
   $$\text{Blended Price} = (3 \times P_{\text{in}} + P_{\text{out}}) / 4$$
 
 ### Benchmark Honesty Policy
-- **No Fabricated Benchmarks:** Scores are strictly seeded from verified, peer-reviewed evaluation leaderboards (SWE-bench Verified, MMLU-Pro, GPQA Diamond, LiveCodeBench).
-- **Coverage Disclosure:** Models lacking verified evaluations are left as `null` rather than estimated. The platform transparently displays an honesty badge (e.g. *"13 of 448 models have published, cited scores"*) and excludes unverified models from benchmark rankings.
+- **Verified Benchmark Sources:** Scores are strictly seeded from verified, peer-reviewed evaluation leaderboards (SWE-bench Verified, MMLU-Pro, GPQA Diamond, LiveCodeBench) and independent third-party evaluations from [Artificial Analysis](https://artificialanalysis.ai/) (Intelligence Index, Engineering Index, Domain evaluations).
+- **Additive Ingestion:** Vendor-reported evaluations (`isVendorReported = true`) are preserved and never overwritten; Artificial Analysis independent evaluations (`isVendorReported = false`) fill gaps under strict deterministic model matching.
+- **Coverage Disclosure:** Models lacking verified evaluations are left as `null` rather than estimated. The platform transparently displays an honesty badge and excludes unverified models from benchmark rankings.
 
 ---
 

@@ -16,6 +16,15 @@ export function Footer() {
           <span className="font-serif text-sm font-medium text-text">OneAtlas</span>
           <span className="text-subtle">·</span>
           <span>Data: Real OpenRouter catalog &amp; cited academic benchmarks</span>
+          <span className="text-subtle">·</span>
+          <a
+            href="https://artificialanalysis.ai/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-text transition-colors underline decoration-border hover:decoration-muted underline-offset-2"
+          >
+            Benchmark data: Artificial Analysis
+          </a>
         </div>
 
         <div className="flex flex-wrap items-center gap-6">

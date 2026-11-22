@@ -578,13 +578,13 @@ async function runSuite() {
 
   // 10. Benchmarks endpoint
   await test<BenchmarkItem[]>(
-    "GET /api/benchmarks returns 5 benchmarks with coverage & topModels",
+    "GET /api/benchmarks returns benchmarks with coverage & topModels",
     "/api/benchmarks",
     (res, json) => {
       assert(res.status === 200, `Expected 200, got ${res.status}`);
       assert(json.success === true, "Expected success: true");
       if (json.success) {
-        assert(json.data.length === 5, `Expected 5 benchmarks, got ${json.data.length}`);
+        assert(json.data.length >= 5, `Expected at least 5 benchmarks, got ${json.data.length}`);
         for (const b of json.data) {
           assert(typeof b.coverage === "number" && b.coverage >= 0, "Expected coverage count");
           assert(Array.isArray(b.topModels), "Expected topModels array");

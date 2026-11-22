@@ -138,7 +138,16 @@ export async function ingestBenchmarks(): Promise<void> {
     `  ✅ Upserted ${scored} benchmark scores (${missing} models not found in DB)`
   );
 
-  // ── 4. Compute composite scores ───────────────────────────────────────────
+  // ── 4. Compute composite scores from ALL scores in DB ─────────────────────
+  await recomputeDerivedScores();
+}
+
+/**
+ * Recompute compositeScore, codingScore, and intelligenceScore for all models
+ * with benchmark scores. Re-exported so that both curated and AA ingestion steps
+ * evaluate all existing BenchmarkScore rows additively.
+ */
+export async function recomputeDerivedScores(): Promise<number> {
   console.log("  🧮 Computing composite scores...");
   const modelsWithScores = await prisma.model.findMany({
     where: {
@@ -166,8 +175,8 @@ export async function ingestBenchmarks(): Promise<void> {
         Math.round((normalizedScores.reduce((a, b) => a + b, 0) / normalizedScores.length) * 10) / 10;
     }
 
-    // codingScore: mean(swe-bench-verified, livecodebench normalized) if >= 1 present
-    const codingBmSlugs = new Set(["swe-bench-verified", "livecodebench"]);
+    // codingScore: mean(swe-bench-verified, livecodebench, coding-index) if >= 1 present
+    const codingBmSlugs = new Set(["swe-bench-verified", "livecodebench", "coding-index"]);
     const codingScores = scores
       .filter((s) => codingBmSlugs.has(s.benchmark.slug))
       .map((s) => normalizeBenchmark(s.benchmark.slug, s.score));
@@ -176,8 +185,8 @@ export async function ingestBenchmarks(): Promise<void> {
         ? Math.round((codingScores.reduce((a, b) => a + b, 0) / codingScores.length) * 10) / 10
         : null;
 
-    // intelligenceScore: mean(mmlu-pro, gpqa-diamond normalized) if >= 1 present
-    const intelBmSlugs = new Set(["mmlu-pro", "gpqa-diamond"]);
+    // intelligenceScore: mean(mmlu-pro, gpqa-diamond, intelligence-index) if >= 1 present
+    const intelBmSlugs = new Set(["mmlu-pro", "gpqa-diamond", "intelligence-index"]);
     const intelScores = scores
       .filter((s) => intelBmSlugs.has(s.benchmark.slug))
       .map((s) => normalizeBenchmark(s.benchmark.slug, s.score));
@@ -198,4 +207,6 @@ export async function ingestBenchmarks(): Promise<void> {
   }
 
   console.log(`  ✅ Updated composite scores for ${updated} models`);
+  return updated;
 }
+

@@ -42,7 +42,7 @@ yarn-error.log*
 next-env.d.ts
 
 # Prisma seed cache
-.cache/openrouter/
+.cache/
 
 # env files — keep only example
 .env
