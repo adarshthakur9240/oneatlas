@@ -320,4 +320,6 @@ export interface HealthDto {
   db: "up" | "down";
   latencyMs: number;
   time: string;
+  coldStartSuspected?: boolean;
+  "db.coldStartSuspected"?: boolean;
 }

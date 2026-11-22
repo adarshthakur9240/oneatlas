@@ -9,12 +9,19 @@ export async function GET() {
   try {
     await prisma.$queryRaw`SELECT 1`;
     const latencyMs = Math.round(performance.now() - start);
+    const coldStartSuspected = latencyMs > 1500;
 
     const data: HealthDto = {
       status: "ok",
       db: "up",
       latencyMs,
       time: new Date().toISOString(),
+      ...(coldStartSuspected
+        ? {
+            coldStartSuspected: true,
+            "db.coldStartSuspected": true,
+          }
+        : {}),
     };
 
     return ok(data, undefined, {

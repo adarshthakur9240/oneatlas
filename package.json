@@ -16,6 +16,7 @@
     "db:verify": "tsx scripts/verify-data.ts",
     "db:studio": "prisma studio",
     "typecheck": "tsc --noEmit",
+    "test:db-resilience": "tsx scripts/test-db-resilience.ts",
     "test:api": "tsx scripts/api-smoke.ts"
   },
   "prisma": {
