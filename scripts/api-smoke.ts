@@ -32,6 +32,18 @@ type JsonResponse<T = unknown> = JsonSuccess<T> | JsonError;
 const BASE_URL = process.env.API_BASE_URL || "http://localhost:3000";
 const results: TestResult[] = [];
 
+async function fetchWithRetry(url: string, init?: RequestInit, retries = 2): Promise<Response> {
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      return await fetch(url, init);
+    } catch (err) {
+      if (attempt === retries) throw err;
+      await new Promise((r) => setTimeout(r, 400 * (attempt + 1)));
+    }
+  }
+  throw new Error("Unreachable");
+}
+
 async function test<T = unknown>(
   name: string,
   endpoint: string,
@@ -41,7 +53,7 @@ async function test<T = unknown>(
   const url = `${BASE_URL}${endpoint}`;
   const start = performance.now();
   try {
-    const res = await fetch(url, init);
+    const res = await fetchWithRetry(url, init);
     const durationMs = Math.round(performance.now() - start);
     let json: unknown = null;
     try {
