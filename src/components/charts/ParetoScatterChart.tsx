@@ -54,6 +54,27 @@ function InnerParetoScatterChart({
   const frontierScatter = processedPoints.filter((p) => frontierSet.has(p.slug));
   const otherScatter = processedPoints.filter((p) => !frontierSet.has(p.slug));
 
+  // Candidate log ticks per user spec: $0.1, $1, $10, $100
+  // Filter to only those within the data range
+  const candidateTicks = [0.1, 1, 10, 100];
+  const allPrices = processedPoints.map((p) => p.plotPrice);
+  const minPrice = allPrices.length > 0 ? Math.min(...allPrices) : 0.02;
+  const maxPrice = allPrices.length > 0 ? Math.max(...allPrices) : 100;
+
+  const dataTicks = candidateTicks.filter((t) => t >= minPrice && t <= maxPrice);
+  const xTicks =
+    dataTicks.length > 0
+      ? dataTicks
+      : candidateTicks.filter((t, i) => i === 0 || t <= maxPrice);
+
+  const formatDollarTick = (v: number): string => {
+    if (v === 0.1) return "$0.1";
+    if (v === 1) return "$1";
+    if (v === 10) return "$10";
+    if (v === 100) return "$100";
+    return `$${v}`;
+  };
+
   return (
     <div className="w-full space-y-3">
       <div className="flex flex-wrap items-center justify-between text-xs font-mono text-muted gap-2">
@@ -68,7 +89,7 @@ function InnerParetoScatterChart({
           </span>
         </div>
         <span className="text-subtle text-[11px]">
-          * Free models plotted at $0.02 baseline for log-scale visibility
+          * Free models plotted at baseline for log-scale visibility
         </span>
       </div>
 
@@ -82,7 +103,8 @@ function InnerParetoScatterChart({
               name="Price / 1M"
               scale="log"
               domain={["auto", "auto"]}
-              tickFormatter={(v) => (v <= 0.02 ? "$0" : `$${v}`)}
+              ticks={xTicks}
+              tickFormatter={formatDollarTick}
               stroke="#6f6b62"
               tick={{ fill: "#9b968b", fontSize: 11, fontFamily: "var(--font-mono)" }}
               label={{

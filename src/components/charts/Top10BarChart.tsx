@@ -11,6 +11,7 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  LabelList,
 } from "recharts";
 
 export interface Top10Item {
@@ -40,8 +41,12 @@ function InnerTop10BarChart({
     );
   }
 
-  // Reverse so #1 is at the top of the horizontal bar chart
-  const reversed = [...data].reverse();
+  // Preserve descending order: rank 1 at the top, rank 10 at the bottom
+  const chartData = [...data];
+
+  // Headroom for score labels placed at the end of each bar
+  const maxScore = Math.max(...chartData.map((d) => d.score), 100);
+  const domainMax = Math.ceil(maxScore > 100 ? maxScore * 1.08 : 100);
 
   return (
     <div className="w-full space-y-3">
@@ -49,13 +54,13 @@ function InnerTop10BarChart({
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             layout="vertical"
-            data={reversed}
-            margin={{ top: 10, right: 30, left: 20, bottom: 10 }}
+            data={chartData}
+            margin={{ top: 10, right: 48, left: 20, bottom: 10 }}
           >
             <CartesianGrid strokeDasharray="3 3" stroke="#2e2d2a" horizontal={false} />
             <XAxis
               type="number"
-              domain={[0, 100]}
+              domain={[0, domainMax]}
               stroke="#6f6b62"
               tick={{ fill: "#9b968b", fontSize: 11, fontFamily: "var(--font-mono)" }}
               tickLine={false}
@@ -96,7 +101,18 @@ function InnerTop10BarChart({
               fill="#8fc49a"
               radius={[0, 4, 4, 0]}
               maxBarSize={20}
-            />
+            >
+              <LabelList
+                dataKey="score"
+                position="right"
+                fill="#9b968b"
+                fontSize={11}
+                fontFamily="var(--font-mono)"
+                formatter={(val: unknown) =>
+                  typeof val === "number" ? val.toFixed(1) : String(val ?? "")
+                }
+              />
+            </Bar>
           </BarChart>
         </ResponsiveContainer>
       </div>
