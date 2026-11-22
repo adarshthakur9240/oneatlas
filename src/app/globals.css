@@ -1,26 +1,102 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #161614;
+  --surface: #1c1c1a;
+  --surface-raised: #222220;
+  --border: #2e2d2a;
+  --border-strong: #3a3935;
+  --text: #f2eee6;
+  --muted: #9b968b;
+  --subtle: #6f6b62;
+
+  --cream-card: #e5dfd2;
+  --cream-panel: #eee9df;
+  --cream-text: #1b1a17;
+  --cream-muted: #6b665b;
+  --cream-bar-fill: #bdb7ab;
+  --cream-bar-highlight: #6e6a62;
+
+  --accent-ok: #8fc49a;
+  --accent-warn: #d9a441;
+  --accent-danger: #d9705f;
+  --link: #f2eee6;
 }
 
 @theme inline {
   --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-subtle: var(--subtle);
+
+  --color-cream-card: var(--cream-card);
+  --color-cream-panel: var(--cream-panel);
+  --color-cream-text: var(--cream-text);
+  --color-cream-muted: var(--cream-muted);
+  --color-cream-bar-fill: var(--cream-bar-fill);
+  --color-cream-bar-highlight: var(--cream-bar-highlight);
+
+  --color-accent-ok: var(--accent-ok);
+  --color-accent-warn: var(--accent-warn);
+  --color-accent-danger: var(--accent-danger);
+  --color-link: var(--link);
+
+  --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono), ui-monospace, SFMono-Regular, monospace;
+  --font-serif: var(--font-serif), ui-serif, Georgia, serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* Global resets & typography */
+html,
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--background);
+  color: var(--text);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  color-scheme: dark;
+}
+
+/* Visible focus rings for accessible keyboard navigation */
+:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+
+/* Custom subtle scrollbars for dense data tables and drawers */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
+}
+
+/* Tabular figures for dense financial and token metrics */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Respect user motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
