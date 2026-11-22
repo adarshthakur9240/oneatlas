@@ -40,6 +40,9 @@ export function ok<T>(
   if (!headers.has("Cache-Control")) {
     headers.set("Cache-Control", DEFAULT_CACHE_CONTROL);
   }
+  if (!headers.has("CDN-Cache-Control") && headers.get("Cache-Control") !== "no-store") {
+    headers.set("CDN-Cache-Control", DEFAULT_CACHE_CONTROL);
+  }
   if (!headers.has("x-request-id")) {
     headers.set("x-request-id", crypto.randomUUID());
   }

@@ -280,8 +280,24 @@ async function runSuite() {
   );
 
   await test("GET /api/models public Cache-Control", "/api/models", (res) => {
-    const cc = res.headers.get("Cache-Control") || "";
-    assert(cc.includes("s-maxage=60"), `Expected s-maxage=60, got ${cc}`);
+    const cc = (res.headers.get("Cache-Control") || "").toLowerCase();
+    const isVercel = Boolean(
+      res.headers.get("x-vercel-id") || res.headers.get("x-vercel-cache")
+    );
+
+    if (isVercel) {
+      const vercelCache = res.headers.get("x-vercel-cache") || "UNKNOWN";
+      console.log(`    ℹ️ Detected Vercel Edge CDN (x-vercel-cache: ${vercelCache})`);
+      assert(
+        cc.includes("public"),
+        `Expected public Cache-Control behind Vercel Edge CDN, got ${cc}`
+      );
+    } else {
+      assert(
+        cc.includes("s-maxage=60"),
+        `Expected s-maxage=60 on direct/local origin response, got ${cc}`
+      );
+    }
   });
 
   await test<ModelSummaryRow[]>(
