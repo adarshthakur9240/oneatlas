@@ -15,7 +15,8 @@
     "db:seed:test": "tsx prisma/seed.ts --limit 10",
     "db:verify": "tsx scripts/verify-data.ts",
     "db:studio": "prisma studio",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:api": "tsx scripts/api-smoke.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
