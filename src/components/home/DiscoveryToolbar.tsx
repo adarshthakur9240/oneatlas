@@ -52,9 +52,9 @@ export function DiscoveryToolbar({
   return (
     <div className="flex flex-col gap-3.5 mb-6">
       {/* Top Toolbar Row */}
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="w-full flex flex-wrap items-center justify-between gap-3">
         {/* Left: Search & Dropdowns */}
-        <div className="flex flex-wrap items-center gap-2.5 flex-1 min-w-[280px]">
+        <div className="flex flex-wrap items-center gap-2.5 flex-1 min-w-0 sm:min-w-[280px]">
           <div className="w-full sm:w-64">
             <Input
               icon={<Search className="w-4 h-4" aria-hidden="true" />}

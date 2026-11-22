@@ -55,8 +55,8 @@ export function ModelTable({
       <table className="w-full text-left border-collapse text-xs select-none">
         {/* Sticky Table Header */}
         <thead>
-          <tr className="border-b border-border bg-surface text-muted font-mono uppercase text-[11px] tracking-[0.08em] whitespace-nowrap">
-            <th scope="col" className="py-2.5 px-3 w-[240px] max-w-[260px] font-normal sticky left-0 bg-surface z-10 shadow-xs">
+          <tr className="border-b border-border bg-surface text-muted font-mono uppercase text-[10.5px] tracking-[0.08em] whitespace-nowrap h-10">
+            <th scope="col" className="py-2 px-3 w-[240px] max-w-[260px] font-normal sticky left-0 bg-surface z-10 shadow-xs">
               <button
                 type="button"
                 onClick={() => handleSort("name")}
@@ -188,10 +188,10 @@ export function ModelTable({
             return (
               <tr
                 key={m.id}
-                className="h-15 hover:bg-surface/80 transition-colors group cursor-default"
+                className="h-[52px] hover:bg-surface-raised/40 transition-colors group cursor-default"
               >
                 {/* MODEL CELL (Sticky left column) */}
-                <td className="py-2 px-3 w-[240px] max-w-[260px] sticky left-0 bg-background/95 group-hover:bg-surface/95 z-10 shadow-xs transition-colors">
+                <td className="py-1.5 px-3 w-[240px] max-w-[260px] sticky left-0 bg-background group-hover:bg-[#1f1f1d] z-10 shadow-xs transition-colors">
                   <div className="flex items-center gap-2.5">
                     <LabAvatar slug={m.lab.slug} name={m.lab.name} size="md" />
                     <div className="flex flex-col min-w-0 max-w-[200px]">

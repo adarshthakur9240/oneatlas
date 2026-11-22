@@ -76,7 +76,7 @@ export default async function ModelPage({ params }: ModelPageProps) {
   const modelTitle = displayName(model);
 
   return (
-    <div className="w-full min-h-screen py-10">
+    <div className="w-full max-w-full overflow-x-hidden min-h-screen py-8 sm:py-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 space-y-12">
         {/* 1. Header with Avatar, Title, Source ID copy, Badges & Actions */}
         <ModelHeader model={model} />

@@ -65,7 +65,7 @@ export function ModelCard({ model }: ModelCardProps) {
             {model.isOpenWeights ? (
               <Badge variant="open">Open weights</Badge>
             ) : (
-              <span className="text-[10px] font-mono uppercase text-subtle px-1.5 py-0.5 border border-border rounded-md">
+              <span className="text-[10px] font-mono uppercase text-subtle px-2 py-0.5 border border-border rounded-full">
                 Closed
               </span>
             )}
@@ -75,70 +75,70 @@ export function ModelCard({ model }: ModelCardProps) {
         {/* Modalities Line */}
         <div className="text-[11px] font-mono text-muted mb-3 flex items-center gap-1.5">
           <span className="text-subtle font-medium">IN</span>
-          <span className="px-1 py-0.2 bg-surface-raised border border-border rounded-xs text-text">
+          <span className="px-1.5 py-0.5 bg-surface-raised border border-border rounded-[4px] text-text">
             {inMod}
           </span>
           <span className="text-subtle">→</span>
           <span className="text-subtle font-medium">OUT</span>
-          <span className="px-1 py-0.2 bg-surface-raised border border-border rounded-xs text-text">
+          <span className="px-1.5 py-0.5 bg-surface-raised border border-border rounded-[4px] text-text">
             {outMod}
           </span>
         </div>
 
         {/* Capabilities Chip Row */}
-        <div className="flex flex-wrap items-center gap-1.5 mb-4 text-[10px] font-mono">
+        <div className="flex flex-wrap items-center gap-1.5 mb-3.5 text-[10px] font-mono">
           <span
-            className={`px-1.5 py-0.5 rounded-sm border inline-flex items-center gap-1 ${
+            className={`px-2 py-0.5 rounded-[4px] border inline-flex items-center gap-1 ${
               hasReasoning
-                ? "bg-[#8fc49a]/10 border-[#8fc49a]/30 text-[#8fc49a]"
-                : "border-border text-subtle/50 line-through"
+                ? "bg-[#8fc49a]/12 border-[#8fc49a]/30 text-[#8fc49a] font-medium"
+                : "border-border/60 text-subtle/50 line-through"
             }`}
           >
-            {hasReasoning && <Check className="w-2.5 h-2.5" />}
+            {hasReasoning && <Check className="w-2.5 h-2.5 stroke-[2.5]" />}
             Reasoning
           </span>
 
           <span
-            className={`px-1.5 py-0.5 rounded-sm border inline-flex items-center gap-1 ${
+            className={`px-2 py-0.5 rounded-[4px] border inline-flex items-center gap-1 ${
               hasTools
-                ? "bg-[#8fc49a]/10 border-[#8fc49a]/30 text-[#8fc49a]"
-                : "border-border text-subtle/50 line-through"
+                ? "bg-[#8fc49a]/12 border-[#8fc49a]/30 text-[#8fc49a] font-medium"
+                : "border-border/60 text-subtle/50 line-through"
             }`}
           >
-            {hasTools && <Check className="w-2.5 h-2.5" />}
+            {hasTools && <Check className="w-2.5 h-2.5 stroke-[2.5]" />}
             Tools
           </span>
 
           <span
-            className={`px-1.5 py-0.5 rounded-sm border inline-flex items-center gap-1 ${
+            className={`px-2 py-0.5 rounded-[4px] border inline-flex items-center gap-1 ${
               hasJson
-                ? "bg-[#8fc49a]/10 border-[#8fc49a]/30 text-[#8fc49a]"
-                : "border-border text-subtle/50 line-through"
+                ? "bg-[#8fc49a]/12 border-[#8fc49a]/30 text-[#8fc49a] font-medium"
+                : "border-border/60 text-subtle/50 line-through"
             }`}
           >
-            {hasJson && <Check className="w-2.5 h-2.5" />}
+            {hasJson && <Check className="w-2.5 h-2.5 stroke-[2.5]" />}
             JSON
           </span>
 
           <span
-            className={`px-1.5 py-0.5 rounded-sm border inline-flex items-center gap-1 ${
+            className={`px-2 py-0.5 rounded-[4px] border inline-flex items-center gap-1 ${
               hasTemp
-                ? "bg-[#8fc49a]/10 border-[#8fc49a]/30 text-[#8fc49a]"
-                : "border-border text-subtle/50 line-through"
+                ? "bg-[#8fc49a]/12 border-[#8fc49a]/30 text-[#8fc49a] font-medium"
+                : "border-border/60 text-subtle/50 line-through"
             }`}
           >
-            {hasTemp && <Check className="w-2.5 h-2.5" />}
+            {hasTemp && <Check className="w-2.5 h-2.5 stroke-[2.5]" />}
             Temp
           </span>
 
           <span
-            className={`px-1.5 py-0.5 rounded-sm border inline-flex items-center gap-1 ${
+            className={`px-2 py-0.5 rounded-[4px] border inline-flex items-center gap-1 ${
               hasFiles
-                ? "bg-[#8fc49a]/10 border-[#8fc49a]/30 text-[#8fc49a]"
-                : "border-border text-subtle/50 line-through"
+                ? "bg-[#8fc49a]/12 border-[#8fc49a]/30 text-[#8fc49a] font-medium"
+                : "border-border/60 text-subtle/50 line-through"
             }`}
           >
-            {hasFiles && <Check className="w-2.5 h-2.5" />}
+            {hasFiles && <Check className="w-2.5 h-2.5 stroke-[2.5]" />}
             Files
           </span>
         </div>

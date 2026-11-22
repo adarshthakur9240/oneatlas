@@ -11,10 +11,12 @@ export function Badge({
   children,
   ...props
 }: BadgeProps) {
+  const isPill = variant === "open" || variant === "closed";
   return (
     <span
       className={cn(
-        "inline-flex items-center px-1.5 py-0.5 text-[10px] font-mono tracking-wider uppercase font-semibold rounded-md border select-none shrink-0",
+        "inline-flex items-center text-[10px] font-mono tracking-wider uppercase font-semibold border select-none shrink-0",
+        isPill ? "rounded-full px-2 py-0.5" : "rounded-md px-1.5 py-0.5",
         variant === "default" &&
           "bg-surface-raised text-muted border-border",
         variant === "new" &&

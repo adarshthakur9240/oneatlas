@@ -12,27 +12,27 @@ interface HeroSectionProps {
 
 export function HeroSection({ stats }: HeroSectionProps) {
   return (
-    <section className="w-full pt-10 sm:pt-14 pb-12 sm:pb-16 border-b border-border">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+    <section className="w-full pt-8 sm:pt-12 pb-10 sm:pb-14 border-b border-border">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           {/* Left Column: Editorial Headline & Actions */}
-          <div className="lg:col-span-6 flex flex-col items-start">
-            <div className="inline-flex items-center gap-2 text-xs font-mono tracking-wider uppercase text-muted mb-4">
+          <div className="w-full lg:col-span-6 flex flex-col items-start">
+            <div className="inline-flex items-center gap-2 text-xs font-mono tracking-wider uppercase text-muted mb-3 sm:mb-4">
               <span className="w-2 h-2 rounded-full bg-[#8fc49a] animate-pulse" />
               <span>Catalog updated {formatDate(stats.updatedAt)}</span>
             </div>
 
-            <h1 className="font-serif text-4xl sm:text-6xl lg:text-[72px] font-normal leading-[1.04] sm:leading-[1.02] tracking-[-0.02em] text-text mb-6">
+            <h1 className="font-serif text-[34px] sm:text-5xl lg:text-[70px] font-normal leading-[1.06] sm:leading-[1.02] tracking-[-0.025em] text-text mb-4 sm:mb-6">
               Every AI model, compared.
             </h1>
 
-            <p className="text-base sm:text-lg text-muted max-w-[34rem] leading-relaxed mb-8">
+            <p className="text-[15px] sm:text-base text-muted max-w-[34rem] leading-relaxed mb-6 sm:mb-8">
               Specs, pricing, capabilities, and providers in one place. Sort any
               column, filter to what you need, and open a model for the full
               record.
             </p>
 
-            <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+            <div className="w-full flex flex-wrap items-center gap-3 sm:gap-4">
               <Link href="/rankings">
                 <Button variant="primary-cream" size="lg" className="font-semibold gap-2 shadow-xs">
                   <Sparkles className="w-4 h-4 text-cream-text" />

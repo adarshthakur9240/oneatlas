@@ -32,41 +32,41 @@ export function StatsBento({ stats }: StatsBentoProps) {
   ];
 
   return (
-    <div className="w-full bg-cream-card text-cream-text rounded-[28px] p-6 lg:p-7 border border-[#d8d2c5] shadow-xl select-none">
+    <div className="w-full max-w-full bg-cream-card text-cream-text rounded-[24px] sm:rounded-[28px] p-4.5 sm:p-6 lg:p-7 border border-[#d8d2c5] shadow-xl select-none overflow-hidden">
       {/* Top row: 4 Big Serif Numerals */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pb-6 border-b border-[#d8d2c5]/80">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pb-5 sm:pb-6 border-b border-[#d8d2c5]/80">
         <div>
-          <div className="font-serif text-3xl sm:text-4xl font-normal tracking-tight text-cream-text leading-none">
+          <div className="font-serif text-[28px] sm:text-4xl font-normal tracking-[-0.03em] text-cream-text leading-none">
             {formatNumber(totals.models)}
           </div>
-          <div className="text-[11px] font-mono tracking-[0.08em] uppercase text-cream-muted mt-2">
+          <div className="text-[10.5px] sm:text-[11px] font-mono tracking-[0.08em] uppercase text-cream-muted mt-1.5 sm:mt-2">
             Models
           </div>
         </div>
 
         <div>
-          <div className="font-serif text-3xl sm:text-4xl font-normal tracking-tight text-cream-text leading-none">
+          <div className="font-serif text-[28px] sm:text-4xl font-normal tracking-[-0.03em] text-cream-text leading-none">
             {formatNumber(totals.labs)}
           </div>
-          <div className="text-[11px] font-mono tracking-[0.08em] uppercase text-cream-muted mt-2">
+          <div className="text-[10.5px] sm:text-[11px] font-mono tracking-[0.08em] uppercase text-cream-muted mt-1.5 sm:mt-2">
             Labs
           </div>
         </div>
 
         <div>
-          <div className="font-serif text-3xl sm:text-4xl font-normal tracking-tight text-cream-text leading-none">
+          <div className="font-serif text-[28px] sm:text-4xl font-normal tracking-[-0.03em] text-cream-text leading-none">
             {formatNumber(totals.providers)}
           </div>
-          <div className="text-[11px] font-mono tracking-[0.08em] uppercase text-cream-muted mt-2">
+          <div className="text-[10.5px] sm:text-[11px] font-mono tracking-[0.08em] uppercase text-cream-muted mt-1.5 sm:mt-2">
             Providers
           </div>
         </div>
 
         <div>
-          <div className="font-serif text-3xl sm:text-4xl font-normal tracking-tight text-cream-text leading-none">
+          <div className="font-serif text-[28px] sm:text-4xl font-normal tracking-[-0.03em] text-cream-text leading-none">
             {formatNumber(totals.apiListings)}
           </div>
-          <div className="text-[11px] font-mono tracking-[0.08em] uppercase text-cream-muted mt-2">
+          <div className="text-[10.5px] sm:text-[11px] font-mono tracking-[0.08em] uppercase text-cream-muted mt-1.5 sm:mt-2">
             API Listings
           </div>
         </div>
@@ -75,7 +75,7 @@ export function StatsBento({ stats }: StatsBentoProps) {
       {/* Bottom row: 2 Inset Cream Panels */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-5">
         {/* Panel A: Releases per month */}
-        <div className="bg-cream-panel rounded-[20px] p-3.5 sm:p-4.5 border border-[#dfd9cd] flex flex-col justify-between overflow-hidden">
+        <div className="bg-cream-panel rounded-[18px] sm:rounded-[20px] p-3.5 sm:p-4.5 border border-[#dfd9cd] flex flex-col justify-between overflow-hidden">
           <div>
             <div className="flex items-center justify-between text-xs mb-3">
               <span className="font-medium text-cream-text">

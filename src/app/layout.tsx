@@ -1,5 +1,5 @@
 // src/app/layout.tsx
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono, Newsreader } from "next/font/google";
 import { SWRConfigProvider } from "@/components/providers/SWRConfigProvider";
 import { CompareProvider } from "@/lib/compare-store";
@@ -7,6 +7,12 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { CompareTray } from "@/components/compare/CompareTray";
 import "./globals.css";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#161614",
+};
 
 const sans = Inter({
   variable: "--font-sans",

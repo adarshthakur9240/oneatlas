@@ -125,9 +125,18 @@ export function displayName(model: {
     const prefix = name.slice(0, colonIndex).trim().toLowerCase();
     const labName = model.lab?.name?.trim().toLowerCase();
     const labSlug = model.lab?.slug?.trim().toLowerCase();
+    const normPrefix = prefix.replace(/[^a-z0-9]/g, "");
+    const normLabName = labName ? labName.replace(/[^a-z0-9]/g, "") : "";
+    const normLabSlug = labSlug ? labSlug.replace(/[^a-z0-9]/g, "") : "";
     if (
-      (labName && (prefix === labName || labName.startsWith(prefix))) ||
-      (labSlug && (prefix === labSlug || labSlug.startsWith(prefix)))
+      (normLabName &&
+        (normPrefix === normLabName ||
+          normLabName.startsWith(normPrefix) ||
+          normPrefix.startsWith(normLabName))) ||
+      (normLabSlug &&
+        (normPrefix === normLabSlug ||
+          normLabSlug.startsWith(normPrefix) ||
+          normPrefix.startsWith(normLabSlug)))
     ) {
       return name.slice(colonIndex + 1).trim();
     }

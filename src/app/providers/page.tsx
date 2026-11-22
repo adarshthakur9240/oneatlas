@@ -19,7 +19,7 @@ export default async function ProvidersPage() {
   const providers = await listProviders();
 
   return (
-    <div className="w-full min-h-screen py-10 select-none">
+    <div className="w-full max-w-full overflow-x-hidden min-h-screen py-8 sm:py-10 select-none">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 space-y-8">
         <div className="pb-6 border-b border-border">
           <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-muted mb-2">
