@@ -2,6 +2,8 @@
 // Comprehensive end-to-end API smoke test suite
 // Asserts envelopes, status codes, validations, filters, sorting, and pagination
 
+export {};
+
 interface TestResult {
   name: string;
   endpoint: string;
