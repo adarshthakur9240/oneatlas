@@ -306,6 +306,15 @@ export async function ingestCatalog(opts: IngestOptions = {}): Promise<void> {
       }
     }
 
+    // Round all prices to 6 decimal places to prevent floating-point artifacts
+    const round6 = (n: number | null) =>
+      n === null || isNaN(n) ? null : Math.round(n * 1e6) / 1e6;
+
+    const rMinInputPrice = round6(minInputPrice);
+    const rMinOutputPrice = round6(minOutputPrice);
+    const rBlendedPrice = round6(minBlendedPrice);
+    const rMinCacheReadPrice = round6(minCacheReadPrice);
+
     const slug = deriveSlug(model.id);
     const releaseDate = model.created ? new Date(model.created * 1000) : null;
 
@@ -324,10 +333,10 @@ export async function ingestCatalog(opts: IngestOptions = {}): Promise<void> {
           releaseDate,
           huggingFaceId: model.hugging_face_id ?? null,
           capabilities: deriveCapabilities(model, hasCacheRead),
-          minInputPrice,
-          minOutputPrice,
-          blendedPrice: minBlendedPrice,
-          minCacheReadPrice,
+          minInputPrice: rMinInputPrice,
+          minOutputPrice: rMinOutputPrice,
+          blendedPrice: rBlendedPrice,
+          minCacheReadPrice: rMinCacheReadPrice,
           cheapestProviderSlug,
           cheapestProviderName,
           providerCount,
@@ -348,10 +357,10 @@ export async function ingestCatalog(opts: IngestOptions = {}): Promise<void> {
           releaseDate,
           huggingFaceId: model.hugging_face_id ?? null,
           capabilities: deriveCapabilities(model, hasCacheRead),
-          minInputPrice,
-          minOutputPrice,
-          blendedPrice: minBlendedPrice,
-          minCacheReadPrice,
+          minInputPrice: rMinInputPrice,
+          minOutputPrice: rMinOutputPrice,
+          blendedPrice: rBlendedPrice,
+          minCacheReadPrice: rMinCacheReadPrice,
           cheapestProviderSlug,
           cheapestProviderName,
           providerCount,

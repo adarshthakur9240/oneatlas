@@ -14,9 +14,11 @@ export function perTokenToPerMillion(s: string): number | null {
 /**
  * Blended price = (3 * input + output) / 4
  * Weights input 3:1 to match typical prompt-heavy workloads.
+ * Rounded to 6 decimals.
  */
 export function blendedPrice(input: number, output: number): number {
-  return (3 * input + output) / 4;
+  const price = (3 * input + output) / 4;
+  return Math.round(price * 1e6) / 1e6;
 }
 
 /**
