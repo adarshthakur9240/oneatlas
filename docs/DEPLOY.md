@@ -118,3 +118,28 @@ If a deployment exhibits regressions:
 2. Identify the previous stable deployment hash.
 3. Click **Instant Rollback**.
 4. Since database migrations maintain backward compatibility (no destructive column drops without deprecation phases), the prior build functions without database downtime.
+
+---
+
+## 5. GitHub Actions CI & Dedicated Neon "ci" Branch
+
+### Why CI Requires Database Connectivity
+OneAtlas leverages Next.js App Router Incremental Static Regeneration (`export const revalidate = 300`) on read-heavy catalog routes (`/`, `/rankings`, `/benchmarks`, `/labs`, `/providers`). During `next build`, Next.js executes route Server Components to pre-render static HTML snapshots. Using dummy credentials (e.g. `localhost:5432`) causes static prerendering to fail during the build step.
+
+### Neon Branching Architecture
+Rather than risking production data or maintaining complex Docker containers in CI:
+- Neon supports instantaneous, copy-on-write database branching with isolated compute.
+- A dedicated branch named **`ci`** was branched from the parent database.
+- GitHub Actions executes Prisma code generation, type checking, and ISR prerendering against this isolated `ci` branch.
+
+### Required GitHub Repository Secrets
+Configure the following secrets in **GitHub > Repository Settings > Secrets and variables > Actions**:
+
+| Secret Name | Target Endpoint | Description |
+| :--- | :--- | :--- |
+| `DATABASE_URL` | Neon `ci` Branch Pooler | Pooled PgBouncer connection string (`-pooler` host) with parameters: `?sslmode=require&connect_timeout=15&pool_timeout=20`. |
+| `DIRECT_URL` | Neon `ci` Branch Compute | Direct unpooled connection string without `-pooler` host for Prisma CLI schema operations. |
+
+### CI Workflow Safeguards (`.github/workflows/ci.yml`)
+1. **Fail-Early Secret Validation**: The workflow includes a validation step that checks for the presence of `DATABASE_URL` and halts immediately with a descriptive error message if missing.
+2. **Branch Isolation**: CI builds and runs never read or write against the production database branch, maintaining complete isolation.

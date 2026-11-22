@@ -62,19 +62,5 @@ scripts/ralph/
 scripts/search_repo.*
 scripts/setup_search.*
 scripts/validate-*
-
-# tooling noise
-.agent/
-.agents/
-.gemini/
-.gsd/
-adapters/
-tasks/
-GSD-STYLE.md
-PROJECT_RULES.md
-model_capabilities.yaml
-scripts/ralph/
-scripts/search_repo.*
-scripts/setup_search.*
-scripts/validate-*
 docs/
+!docs/DEPLOY.md

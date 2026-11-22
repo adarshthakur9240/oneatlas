@@ -21,14 +21,23 @@ jobs:
           node-version: 20
           cache: npm
 
+      - name: Validate CI Secrets
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "::error::Required secret DATABASE_URL is missing. Please configure DATABASE_URL (and DIRECT_URL) pointing to the dedicated Neon 'ci' database branch in GitHub repository settings."
+            exit 1
+          fi
+
       - name: Install dependencies
         run: npm ci
 
       - name: Generate Prisma Client
         run: npx prisma generate
         env:
-          DATABASE_URL: "postgresql://ci_dummy_user:ci_dummy_pass@localhost:5432/ci_db"
-          DIRECT_URL: "postgresql://ci_dummy_user:ci_dummy_pass@localhost:5432/ci_db"
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
 
       - name: TypeScript Check
         run: npm run typecheck
@@ -39,6 +48,6 @@ jobs:
       - name: Next.js Production Build
         run: npm run build
         env:
-          DATABASE_URL: "postgresql://ci_dummy_user:ci_dummy_pass@localhost:5432/ci_db"
-          DIRECT_URL: "postgresql://ci_dummy_user:ci_dummy_pass@localhost:5432/ci_db"
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
           NEXT_PUBLIC_APP_URL: "https://oneatlas.dev"

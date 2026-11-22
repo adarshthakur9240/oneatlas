@@ -324,6 +324,13 @@ npm run test:pages
 npm run db:verify
 ```
 
+### Continuous Integration (CI) & Neon "ci" Database Branch
+
+Every pull request and push to `main` executes the automated CI pipeline (`.github/workflows/ci.yml`):
+- **Lint & Strict Typing:** Validates code standards via `npm run lint` and `npm run typecheck` (`tsc --noEmit`).
+- **Fail-Early Secret Verification:** Halts immediately with a descriptive notice if the `DATABASE_URL` secret is missing from repository settings.
+- **Isolated ISR Prerendering:** Because Next.js App Router prerenders static ISR catalog pages (`revalidate = 300`) at build time, the CI runner connects to a dedicated, isolated Neon Postgres branch named **`ci`** using repository secrets (`DATABASE_URL` and `DIRECT_URL`). This guarantees exact production build parity without risk to production data. See [DEPLOY.md](file:///Users/adarshthakur/Projects/oneatlas/docs/DEPLOY.md) for configuration details.
+
 ---
 
 ## Known Limitations & Production Roadmap
