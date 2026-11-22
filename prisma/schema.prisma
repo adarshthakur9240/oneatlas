@@ -1,0 +1,162 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum ModelType {
+  FLAGSHIP
+  REASONING
+  CODING
+  FAST
+  MULTIMODAL
+  EMBEDDING
+}
+
+model Lab {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  description String?
+  website     String?
+  country     String?
+  foundedYear Int?
+  logoUrl     String?
+  isOpenFirst Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  models Model[]
+
+  @@index([slug])
+}
+
+model Provider {
+  id               String   @id @default(cuid())
+  slug             String   @unique
+  name             String
+  description      String?
+  website          String?
+  logoUrl          String?
+  avgLatencyMs     Int?
+  avgThroughputTps Float?
+  uptimePct        Float?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  modelProviders ModelProvider[]
+
+  @@index([slug])
+}
+
+model Model {
+  id               String    @id @default(cuid())
+  sourceId         String    @unique
+  slug             String    @unique
+  labId            String
+  name             String
+  description      String    @db.Text
+  modelType        ModelType @default(FLAGSHIP)
+  isOpenWeights    Boolean   @default(false)
+  isDeprecated     Boolean   @default(false)
+  hasFreeVariant   Boolean   @default(false)
+  contextWindow    Int?
+  maxOutputTokens  Int?
+  releaseDate      DateTime?
+  huggingFaceId    String?
+
+  minInputPrice        Float?
+  minOutputPrice       Float?
+  blendedPrice         Float?
+  minCacheReadPrice    Float?
+  cheapestProviderSlug String?
+  cheapestProviderName String?
+  providerCount        Int     @default(0)
+
+  compositeScore    Float?
+  intelligenceScore Float?
+  codingScore       Float?
+
+  capabilities String[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  lab             Lab             @relation(fields: [labId], references: [id])
+  modelProviders  ModelProvider[]
+  benchmarkScores BenchmarkScore[]
+
+  @@index([labId])
+  @@index([modelType])
+  @@index([blendedPrice])
+  @@index([contextWindow])
+  @@index([compositeScore])
+  @@index([isOpenWeights])
+  @@index([isDeprecated, releaseDate(sort: Desc)])
+  @@index([capabilities], type: Gin)
+}
+
+model ModelProvider {
+  id               String   @id @default(cuid())
+  modelId          String
+  providerId       String
+  endpointTag      String   @default("")
+  inputPrice       Float
+  outputPrice      Float
+  cacheReadPrice   Float?
+  cacheWritePrice  Float?
+  quantization     String?
+  contextWindow    Int?
+  maxOutputTokens  Int?
+  latencyP50Ms     Int?
+  throughputP50Tps Float?
+  uptimePct        Float?
+  isAvailable      Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  model    Model    @relation(fields: [modelId], references: [id])
+  provider Provider @relation(fields: [providerId], references: [id])
+
+  @@unique([modelId, providerId, endpointTag])
+  @@index([modelId])
+  @@index([providerId])
+  @@index([inputPrice])
+}
+
+model Benchmark {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  category    String
+  unit        String
+  description String?
+  createdAt   DateTime @default(now())
+
+  scores BenchmarkScore[]
+
+  @@index([slug])
+}
+
+model BenchmarkScore {
+  id               String    @id @default(cuid())
+  modelId          String
+  benchmarkId      String
+  score            Float
+  isVendorReported Boolean   @default(true)
+  sourceUrl        String
+  evaluatedAt      DateTime?
+  createdAt        DateTime  @default(now())
+
+  model     Model     @relation(fields: [modelId], references: [id])
+  benchmark Benchmark @relation(fields: [benchmarkId], references: [id])
+
+  @@unique([modelId, benchmarkId])
+  @@index([modelId])
+  @@index([benchmarkId])
+}
