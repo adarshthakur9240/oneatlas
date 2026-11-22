@@ -95,3 +95,43 @@ export function timeAgo(date: string | Date | null | undefined): string {
   if (diffMonths < 12) return `${diffMonths}mo ago`;
   return `${diffYears}y ago`;
 }
+
+/**
+ * Strips leading "{lab.name}: " prefix from model names
+ * (e.g. "Anthropic: Claude 3.5 Sonnet" -> "Claude 3.5 Sonnet")
+ */
+export function displayName(model: {
+  name: string;
+  lab?: { name?: string | null; slug?: string | null } | null;
+}): string {
+  if (!model || !model.name) return "";
+  const name = model.name.trim();
+
+  // If lab is provided, check if model.name starts with "{lab.name}:" or "{lab.slug}:"
+  if (model.lab) {
+    const labName = model.lab.name?.trim();
+    if (labName && name.toLowerCase().startsWith(`${labName.toLowerCase()}:`)) {
+      return name.slice(labName.length + 1).trim();
+    }
+    const labSlug = model.lab.slug?.trim();
+    if (labSlug && name.toLowerCase().startsWith(`${labSlug.toLowerCase()}:`)) {
+      return name.slice(labSlug.length + 1).trim();
+    }
+  }
+
+  // Also check generic pattern: if it matches "^([^:]+):\s*(.+)$"
+  const colonIndex = name.indexOf(":");
+  if (colonIndex > 0 && colonIndex < 30) {
+    const prefix = name.slice(0, colonIndex).trim().toLowerCase();
+    const labName = model.lab?.name?.trim().toLowerCase();
+    const labSlug = model.lab?.slug?.trim().toLowerCase();
+    if (
+      (labName && (prefix === labName || labName.startsWith(prefix))) ||
+      (labSlug && (prefix === labSlug || labSlug.startsWith(prefix)))
+    ) {
+      return name.slice(colonIndex + 1).trim();
+    }
+  }
+
+  return name;
+}

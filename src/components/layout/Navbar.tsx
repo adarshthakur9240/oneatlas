@@ -61,15 +61,15 @@ export function Navbar() {
                   key={link.href}
                   href={link.href}
                   className={cn(
-                    "inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full transition-colors select-none",
+                    "inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-full transition-colors select-none",
                     link.active
                       ? "bg-surface-raised text-text font-semibold border border-border-strong shadow-2xs"
                       : "text-muted hover:text-text hover:bg-surface/60"
                   )}
                 >
                   <span>{link.label}</span>
-                  {link.badge !== null && (
-                    <span className="px-1.5 py-0.2 text-[10px] font-mono font-bold bg-[#e5dfd2] text-[#1b1a17] rounded-full tabular-nums">
+                  {typeof link.badge === "number" && link.badge > 0 && (
+                    <span className="ml-1.5 px-1.5 py-0.2 text-[10px] font-mono font-bold bg-[#e5dfd2] text-[#1b1a17] rounded-full tabular-nums">
                       {link.badge}
                     </span>
                   )}
@@ -127,7 +127,7 @@ export function Navbar() {
                   )}
                 >
                   <span>{link.label}</span>
-                  {link.badge !== null && (
+                  {typeof link.badge === "number" && link.badge > 0 && (
                     <span className="px-1.5 py-0.5 text-xs font-mono font-bold bg-[#e5dfd2] text-[#1b1a17] rounded-full">
                       {link.badge}
                     </span>

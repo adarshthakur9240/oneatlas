@@ -4,7 +4,7 @@
 import Link from "next/link";
 import { LabAvatar } from "@/components/ui/LabAvatar";
 import { Badge } from "@/components/ui/Badge";
-import { formatPrice, formatContext, formatScore } from "@/lib/formatters";
+import { formatPrice, formatContext, formatScore, displayName } from "@/lib/formatters";
 import { useCompare } from "@/lib/compare-store";
 import { Check, Plus, ArrowRight } from "lucide-react";
 import type { ModelSummaryDto } from "@/types/api";
@@ -48,9 +48,10 @@ export function ModelCard({ model }: ModelCardProps) {
               <div className="flex items-center gap-1.5">
                 <Link
                   href={`/models/${model.slug}`}
+                  title={model.name}
                   className="font-medium text-sm text-text hover:underline truncate group-hover:text-white"
                 >
-                  {model.name}
+                  {displayName(model)}
                 </Link>
                 {model.isNew && <Badge variant="new">NEW</Badge>}
               </div>

@@ -23,7 +23,7 @@ export function HeroSection({ stats }: HeroSectionProps) {
             </div>
 
             <h1 className="font-serif text-4xl sm:text-6xl lg:text-[72px] font-normal leading-[1.04] sm:leading-[1.02] tracking-[-0.02em] text-text mb-6">
-              Every AI model, <span className="italic">compared.</span>
+              Every AI model, compared.
             </h1>
 
             <p className="text-base sm:text-lg text-muted max-w-[34rem] leading-relaxed mb-8">

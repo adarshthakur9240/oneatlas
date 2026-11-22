@@ -4,7 +4,7 @@
 import Link from "next/link";
 import { LabAvatar } from "@/components/ui/LabAvatar";
 import { Badge } from "@/components/ui/Badge";
-import { formatPrice, formatContext, formatScore } from "@/lib/formatters";
+import { formatPrice, formatContext, formatScore, displayName } from "@/lib/formatters";
 import { useCompare } from "@/lib/compare-store";
 import { Check, Plus, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import type { ModelSummaryDto } from "@/types/api";
@@ -56,7 +56,7 @@ export function ModelTable({
         {/* Sticky Table Header */}
         <thead>
           <tr className="border-b border-border bg-surface text-muted font-mono uppercase text-[11px] tracking-[0.08em] whitespace-nowrap">
-            <th scope="col" className="py-3 px-4 font-normal sticky left-0 bg-surface z-10 shadow-xs">
+            <th scope="col" className="py-2.5 px-3 w-[240px] max-w-[260px] font-normal sticky left-0 bg-surface z-10 shadow-xs">
               <button
                 type="button"
                 onClick={() => handleSort("name")}
@@ -67,7 +67,7 @@ export function ModelTable({
               </button>
             </th>
 
-            <th scope="col" className="py-3 px-3 font-normal text-center">
+            <th scope="col" className="py-2.5 px-2 w-[72px] font-normal text-center">
               <button
                 type="button"
                 onClick={() => handleSort("providers")}
@@ -78,7 +78,7 @@ export function ModelTable({
               </button>
             </th>
 
-            <th scope="col" className="py-3 px-3 font-normal text-right">
+            <th scope="col" className="py-2.5 px-2 w-[68px] font-normal text-right">
               <button
                 type="button"
                 onClick={() => handleSort("context")}
@@ -89,50 +89,50 @@ export function ModelTable({
               </button>
             </th>
 
-            <th scope="col" className="py-3 px-3 font-normal text-right">
+            <th scope="col" className="py-2.5 px-2 w-[64px] font-normal text-right">
               Output
             </th>
 
-            <th scope="col" className="py-3 px-3 font-normal text-center">
+            <th scope="col" className="py-2.5 px-2 w-[72px] font-normal text-center">
               Modalities
             </th>
 
-            <th scope="col" className="py-3 px-2 font-normal text-center" title="Reasoning token support">
+            <th scope="col" className="py-2.5 px-1 w-[46px] font-normal text-center" title="Reasoning token support">
               Reasoning
             </th>
 
-            <th scope="col" className="py-3 px-2 font-normal text-center" title="Function & tool calling">
+            <th scope="col" className="py-2.5 px-1 w-[46px] font-normal text-center" title="Function & tool calling">
               Tools
             </th>
 
-            <th scope="col" className="py-3 px-2 font-normal text-center" title="Structured JSON output">
+            <th scope="col" className="py-2.5 px-1 w-[46px] font-normal text-center" title="Structured JSON output">
               JSON
             </th>
 
-            <th scope="col" className="py-3 px-2 font-normal text-center" title="Temperature parameter support">
+            <th scope="col" className="py-2.5 px-1 w-[46px] font-normal text-center" title="Temperature parameter support">
               Temp
             </th>
 
-            <th scope="col" className="py-3 px-3 font-normal text-center">
+            <th scope="col" className="py-2.5 px-2 w-[64px] font-normal text-center">
               Weights
             </th>
 
-            <th scope="col" className="py-3 px-3 font-normal text-right">
+            <th scope="col" className="py-2.5 px-2 w-[112px] font-normal text-right">
               <button
                 type="button"
                 onClick={() => handleSort("price")}
                 className="inline-flex items-center gap-1 hover:text-text cursor-pointer group ml-auto"
               >
-                <span>Price / 1M (In / Out)</span>
+                <span>Price / 1M</span>
                 {getSortIcon("price_asc", "price_desc")}
               </button>
             </th>
 
-            <th scope="col" className="py-3 px-3 font-normal text-right">
+            <th scope="col" className="py-2.5 px-2 w-[76px] font-normal text-right">
               Cache Read
             </th>
 
-            <th scope="col" className="py-3 px-3 font-normal text-right">
+            <th scope="col" className="py-2.5 px-2 w-[60px] font-normal text-right">
               <button
                 type="button"
                 onClick={() => handleSort("intelligence")}
@@ -143,7 +143,7 @@ export function ModelTable({
               </button>
             </th>
 
-            <th scope="col" className="py-3 px-3 font-normal text-right">
+            <th scope="col" className="py-2.5 px-2 w-[76px] font-normal text-right">
               <button
                 type="button"
                 onClick={() => handleSort("release")}
@@ -154,7 +154,7 @@ export function ModelTable({
               </button>
             </th>
 
-            <th scope="col" className="py-3 px-3 font-normal text-center">
+            <th scope="col" className="py-2.5 px-2 w-[44px] font-normal text-center">
               <span className="sr-only">Compare</span>
             </th>
           </tr>
@@ -168,6 +168,11 @@ export function ModelTable({
             const hasTools = m.capabilities.includes("tool_calling");
             const hasJson = m.capabilities.includes("structured_outputs");
             const hasTemp = m.capabilities.includes("temperature");
+
+            // Format sourceId tail (e.g. "anthropic/claude-sonnet-4" -> "claude-sonnet-4")
+            const sourceTail = m.sourceId.includes("/")
+              ? m.sourceId.split("/")[1]
+              : m.slug;
 
             // Format release date e.g. "Nov 2024"
             let relStr = "—";
@@ -183,48 +188,49 @@ export function ModelTable({
             return (
               <tr
                 key={m.id}
-                className="h-16 hover:bg-surface/80 transition-colors group cursor-default"
+                className="h-15 hover:bg-surface/80 transition-colors group cursor-default"
               >
                 {/* MODEL CELL (Sticky left column) */}
-                <td className="py-2 px-4 sticky left-0 bg-background/95 group-hover:bg-surface/95 z-10 shadow-xs transition-colors">
-                  <div className="flex items-center gap-3">
+                <td className="py-2 px-3 w-[240px] max-w-[260px] sticky left-0 bg-background/95 group-hover:bg-surface/95 z-10 shadow-xs transition-colors">
+                  <div className="flex items-center gap-2.5">
                     <LabAvatar slug={m.lab.slug} name={m.lab.name} size="md" />
-                    <div className="flex flex-col min-w-0 max-w-[220px]">
+                    <div className="flex flex-col min-w-0 max-w-[200px]">
                       <div className="flex items-center gap-1.5">
                         <Link
                           href={`/models/${m.slug}`}
+                          title={m.name}
                           className="font-medium text-text hover:underline truncate group-hover:text-white"
                         >
-                          {m.name}
+                          {displayName(m)}
                         </Link>
                         {m.isNew && <Badge variant="new">NEW</Badge>}
                       </div>
                       <span className="text-[11px] font-mono text-muted truncate">
-                        {m.lab.name} · {m.slug}
+                        {m.lab.name} · {sourceTail}
                       </span>
                     </div>
                   </div>
                 </td>
 
                 {/* PROVIDERS */}
-                <td className="py-2 px-3 text-center">
+                <td className="py-2 px-2 text-center">
                   <span className="inline-flex items-center justify-center px-2 py-0.5 text-xs font-mono font-medium rounded-full bg-surface-raised border border-border text-muted tabular-nums">
                     {m.providerCount}
                   </span>
                 </td>
 
                 {/* CONTEXT */}
-                <td className="py-2 px-3 text-right font-mono text-xs tabular-nums text-text">
+                <td className="py-2 px-2 text-right font-mono text-xs tabular-nums text-text">
                   {formatContext(m.contextWindow)}
                 </td>
 
                 {/* OUTPUT */}
-                <td className="py-2 px-3 text-right font-mono text-xs tabular-nums text-muted">
+                <td className="py-2 px-2 text-right font-mono text-xs tabular-nums text-muted">
                   {formatContext(m.maxOutputTokens)}
                 </td>
 
                 {/* MODALITIES */}
-                <td className="py-2 px-3 text-center">
+                <td className="py-2 px-2 text-center">
                   <span className="inline-flex items-center px-1.5 py-0.5 font-mono text-[10px] bg-surface-raised text-muted rounded-sm border border-border">
                     {m.inputModalities.includes("image") ? "T,I" : "T"} →{" "}
                     {m.outputModalities.includes("embedding") ? "Emb" : "T"}
@@ -232,7 +238,7 @@ export function ModelTable({
                 </td>
 
                 {/* REASONING */}
-                <td className="py-2 px-2 text-center">
+                <td className="py-2 px-1 text-center">
                   {hasReasoning ? (
                     <Check className="w-3.5 h-3.5 text-[#8fc49a] mx-auto" aria-label="Yes" />
                   ) : (
@@ -241,7 +247,7 @@ export function ModelTable({
                 </td>
 
                 {/* TOOLS */}
-                <td className="py-2 px-2 text-center">
+                <td className="py-2 px-1 text-center">
                   {hasTools ? (
                     <Check className="w-3.5 h-3.5 text-[#8fc49a] mx-auto" aria-label="Yes" />
                   ) : (
@@ -250,7 +256,7 @@ export function ModelTable({
                 </td>
 
                 {/* JSON */}
-                <td className="py-2 px-2 text-center">
+                <td className="py-2 px-1 text-center">
                   {hasJson ? (
                     <Check className="w-3.5 h-3.5 text-[#8fc49a] mx-auto" aria-label="Yes" />
                   ) : (
@@ -259,7 +265,7 @@ export function ModelTable({
                 </td>
 
                 {/* TEMP */}
-                <td className="py-2 px-2 text-center">
+                <td className="py-2 px-1 text-center">
                   {hasTemp ? (
                     <Check className="w-3.5 h-3.5 text-[#8fc49a] mx-auto" aria-label="Yes" />
                   ) : (
@@ -268,7 +274,7 @@ export function ModelTable({
                 </td>
 
                 {/* WEIGHTS */}
-                <td className="py-2 px-3 text-center">
+                <td className="py-2 px-2 text-center">
                   {m.isOpenWeights ? (
                     <Badge variant="open">Open</Badge>
                   ) : (
@@ -277,7 +283,7 @@ export function ModelTable({
                 </td>
 
                 {/* PRICE / 1M */}
-                <td className="py-2 px-3 text-right font-mono text-xs tabular-nums">
+                <td className="py-2 px-2 text-right font-mono text-xs tabular-nums">
                   {m.minInputPrice === 0 && m.minOutputPrice === 0 ? (
                     <span className="text-[#8fc49a] font-semibold">Free</span>
                   ) : m.minInputPrice !== null && m.minOutputPrice !== null ? (
@@ -290,12 +296,12 @@ export function ModelTable({
                 </td>
 
                 {/* CACHE READ */}
-                <td className="py-2 px-3 text-right font-mono text-xs tabular-nums text-muted">
+                <td className="py-2 px-2 text-right font-mono text-xs tabular-nums text-muted">
                   {formatPrice(m.minCacheReadPrice)}
                 </td>
 
                 {/* INTELLIGENCE SCORE */}
-                <td className="py-2 px-3 text-right font-mono text-xs tabular-nums">
+                <td className="py-2 px-2 text-right font-mono text-xs tabular-nums">
                   {m.intelligenceScore !== null ? (
                     <span className="text-text font-medium">
                       {formatScore(m.intelligenceScore)}
@@ -306,12 +312,12 @@ export function ModelTable({
                 </td>
 
                 {/* RELEASED */}
-                <td className="py-2 px-3 text-right font-mono text-xs text-muted whitespace-nowrap">
+                <td className="py-2 px-2 text-right font-mono text-xs text-muted whitespace-nowrap">
                   {relStr}
                 </td>
 
                 {/* COMPARE ACTION */}
-                <td className="py-2 px-3 text-center">
+                <td className="py-2 px-2 text-center">
                   <button
                     type="button"
                     onClick={() => toggle(m.slug)}

@@ -1,5 +1,6 @@
 // src/lib/compare-store.tsx
 // SSR-safe external store using useSyncExternalStore for compare tray persistence
+// Caches immutable snapshots to avoid React infinite loop warnings
 
 "use client";
 
@@ -24,7 +25,13 @@ const CompareContext = createContext<CompareContextType | null>(null);
 const STORAGE_KEY = "oneatlas_compare_slugs";
 const MAX_COMPARE = 4;
 
-let memoryState: string[] = [];
+// Immutable module-level constant for SSR and initial empty state
+const EMPTY_SLUGS: string[] = Object.freeze([]) as unknown as string[];
+
+let cachedSnapshot: string[] = EMPTY_SLUGS;
+let lastRawStorage: string | null = null;
+let isInitialized = false;
+
 const listeners = new Set<() => void>();
 
 function emitChange() {
@@ -33,18 +40,57 @@ function emitChange() {
   }
 }
 
+function readStorageSnapshot(): string[] {
+  if (typeof window === "undefined") {
+    return EMPTY_SLUGS;
+  }
+
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw === lastRawStorage && isInitialized) {
+      return cachedSnapshot;
+    }
+
+    lastRawStorage = raw;
+    isInitialized = true;
+
+    if (!raw) {
+      cachedSnapshot = EMPTY_SLUGS;
+      return cachedSnapshot;
+    }
+
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) {
+      const sliced = parsed.slice(0, MAX_COMPARE);
+      // If content is identical to cached, retain reference
+      if (
+        cachedSnapshot.length === sliced.length &&
+        cachedSnapshot.every((val, i) => val === sliced[i])
+      ) {
+        return cachedSnapshot;
+      }
+      cachedSnapshot = Object.freeze(sliced) as string[];
+    } else {
+      cachedSnapshot = EMPTY_SLUGS;
+    }
+  } catch {
+    cachedSnapshot = EMPTY_SLUGS;
+  }
+
+  return cachedSnapshot;
+}
+
 function subscribe(callback: () => void) {
   listeners.add(callback);
+
   const handleStorage = (e: StorageEvent) => {
     if (e.key === STORAGE_KEY) {
-      try {
-        memoryState = e.newValue ? JSON.parse(e.newValue) : [];
-      } catch {
-        memoryState = [];
-      }
+      if (e.newValue === lastRawStorage) return;
+      readStorageSnapshot();
       emitChange();
     }
   };
+
   window.addEventListener("storage", handleStorage);
   return () => {
     listeners.delete(callback);
@@ -52,37 +98,30 @@ function subscribe(callback: () => void) {
   };
 }
 
-let hasReadStorage = false;
 function getSnapshot(): string[] {
-  if (typeof window === "undefined") return [];
-  if (!hasReadStorage) {
-    hasReadStorage = true;
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed)) {
-          memoryState = parsed.slice(0, MAX_COMPARE);
-        }
-      }
-    } catch {
-      memoryState = [];
-    }
-  }
-  return memoryState;
+  return readStorageSnapshot();
 }
 
 function getServerSnapshot(): string[] {
-  return [];
+  return EMPTY_SLUGS;
 }
 
 function saveState(next: string[]) {
-  memoryState = next.slice(0, MAX_COMPARE);
+  const sliced = next.slice(0, MAX_COMPARE);
+  const raw = JSON.stringify(sliced);
+
+  if (raw === lastRawStorage) return;
+
+  lastRawStorage = raw;
+  cachedSnapshot = Object.freeze([...sliced]) as string[];
+  isInitialized = true;
+
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(memoryState));
+    localStorage.setItem(STORAGE_KEY, raw);
   } catch {
-    // Ignore storage quota error
+    // Ignore storage quota errors
   }
+
   emitChange();
 }
 
@@ -90,22 +129,24 @@ export function CompareProvider({ children }: { children: React.ReactNode }) {
   const slugs = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   const add = useCallback((slug: string): boolean => {
-    if (memoryState.includes(slug) || memoryState.length >= MAX_COMPARE) {
+    const current = cachedSnapshot;
+    if (current.includes(slug) || current.length >= MAX_COMPARE) {
       return false;
     }
-    saveState([...memoryState, slug]);
+    saveState([...current, slug]);
     return true;
   }, []);
 
   const remove = useCallback((slug: string) => {
-    saveState(memoryState.filter((s) => s !== slug));
+    saveState(cachedSnapshot.filter((s) => s !== slug));
   }, []);
 
   const toggle = useCallback((slug: string) => {
-    if (memoryState.includes(slug)) {
-      saveState(memoryState.filter((s) => s !== slug));
-    } else if (memoryState.length < MAX_COMPARE) {
-      saveState([...memoryState, slug]);
+    const current = cachedSnapshot;
+    if (current.includes(slug)) {
+      saveState(current.filter((s) => s !== slug));
+    } else if (current.length < MAX_COMPARE) {
+      saveState([...current, slug]);
     }
   }, []);
 

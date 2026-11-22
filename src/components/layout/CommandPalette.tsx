@@ -13,7 +13,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { LabAvatar } from "@/components/ui/LabAvatar";
-import { formatPrice } from "@/lib/formatters";
+import { formatPrice, displayName } from "@/lib/formatters";
 import type { SearchResultDto } from "@/types/api";
 
 interface CommandPaletteProps {
@@ -111,7 +111,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
             value={query}
             onValueChange={setQuery}
             placeholder="Search models, labs, providers, benchmarks..."
-            className="w-full text-sm font-sans bg-transparent text-text placeholder:text-muted/60 outline-none"
+            className="w-full text-sm font-sans bg-transparent text-text placeholder:text-muted/60 outline-none border-none focus:outline-none focus:ring-0"
           />
           <kbd className="text-[10px] font-mono font-medium text-muted bg-surface-raised border border-border px-1.5 py-0.5 rounded-sm shrink-0">
             ESC
@@ -134,14 +134,14 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 
           {/* Quick Actions (when query is empty) */}
           {!query.trim() && (
-            <Command.Group heading="Quick Actions" className="text-[11px] font-mono tracking-wider uppercase text-muted px-2 py-1.5">
+            <Command.Group heading="Quick Actions" className="text-[10px] font-mono tracking-[0.08em] uppercase text-muted px-2 py-1.5">
               <Command.Item
                 onSelect={() => navigate("/compare?models=anthropic-claude-3.5-sonnet,openai-gpt-4o")}
                 className="flex items-center justify-between px-3 py-2 text-xs text-text rounded-[8px] cursor-pointer hover:bg-surface-raised aria-selected:bg-surface-raised select-none transition-colors"
               >
                 <div className="flex items-center gap-2.5">
                   <Sparkles className="w-3.5 h-3.5 text-accent-warn shrink-0" />
-                  <span>Compare Top Flagship Models</span>
+                  <span className="font-sans">Compare Top Flagship Models</span>
                 </div>
                 <ArrowRight className="w-3 h-3 text-muted" />
               </Command.Item>
@@ -152,7 +152,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
               >
                 <div className="flex items-center gap-2.5">
                   <BarChart2 className="w-3.5 h-3.5 text-[#8fc49a] shrink-0" />
-                  <span>View Intelligence &amp; Benchmark Rankings</span>
+                  <span className="font-sans">View Intelligence &amp; Benchmark Rankings</span>
                 </div>
                 <ArrowRight className="w-3 h-3 text-muted" />
               </Command.Item>
@@ -163,7 +163,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
               >
                 <div className="flex items-center gap-2.5">
                   <Cpu className="w-3.5 h-3.5 text-muted shrink-0" />
-                  <span>Browse AI Research Labs</span>
+                  <span className="font-sans">Browse AI Research Labs</span>
                 </div>
                 <ArrowRight className="w-3 h-3 text-muted" />
               </Command.Item>
@@ -174,7 +174,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
               >
                 <div className="flex items-center gap-2.5">
                   <Layers className="w-3.5 h-3.5 text-muted shrink-0" />
-                  <span>Explore Inference Providers &amp; APIs</span>
+                  <span className="font-sans">Explore Inference Providers &amp; APIs</span>
                 </div>
                 <ArrowRight className="w-3 h-3 text-muted" />
               </Command.Item>
@@ -183,24 +183,27 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 
           {/* Model Results */}
           {activeResults.models.length > 0 && (
-            <Command.Group heading="Models" className="text-[11px] font-mono tracking-wider uppercase text-muted px-2 py-1.5">
+            <Command.Group heading="Models" className="text-[10px] font-mono tracking-[0.08em] uppercase text-muted px-2 py-1.5">
               {activeResults.models.map((model) => (
                 <Command.Item
                   key={model.id}
                   value={`model-${model.slug}-${model.name}`}
                   onSelect={() => navigate(`/models/${model.slug}`)}
+                  title={model.name}
                   className="flex items-center justify-between px-3 py-2 text-xs text-text rounded-[8px] cursor-pointer hover:bg-surface-raised aria-selected:bg-surface-raised select-none transition-colors"
                 >
                   <div className="flex items-center gap-2.5 min-w-0">
                     <LabAvatar slug={model.lab.slug} name={model.lab.name} size="sm" />
-                    <div className="truncate">
-                      <span className="font-medium text-text">{model.name}</span>
-                      <span className="text-[11px] font-mono text-muted ml-2">
+                    <div className="flex items-center gap-2 truncate">
+                      <span className="font-sans font-medium text-text truncate">
+                        {displayName(model)}
+                      </span>
+                      <span className="font-sans text-xs text-muted truncate">
                         {model.lab.name}
                       </span>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 shrink-0 font-mono text-[11px] text-muted">
+                  <div className="flex items-center gap-2 shrink-0 font-mono text-[11px] text-muted ml-3">
                     {model.blendedPrice !== null && (
                       <span className="tabular-nums">
                         {formatPrice(model.blendedPrice)}/1M
@@ -214,7 +217,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 
           {/* Lab Results */}
           {activeResults.labs.length > 0 && (
-            <Command.Group heading="Labs" className="text-[11px] font-mono tracking-wider uppercase text-muted px-2 py-1.5">
+            <Command.Group heading="Labs" className="text-[10px] font-mono tracking-[0.08em] uppercase text-muted px-2 py-1.5">
               {activeResults.labs.map((lab) => (
                 <Command.Item
                   key={lab.id}
@@ -224,7 +227,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                 >
                   <div className="flex items-center gap-2.5 min-w-0">
                     <LabAvatar slug={lab.slug} name={lab.name} size="sm" />
-                    <span className="font-medium truncate text-text">{lab.name}</span>
+                    <span className="font-sans font-medium truncate text-text">{lab.name}</span>
                   </div>
                   <span className="font-mono text-[11px] text-muted">
                     {lab.modelCount} {lab.modelCount === 1 ? "model" : "models"}
@@ -236,7 +239,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 
           {/* Provider Results */}
           {activeResults.providers.length > 0 && (
-            <Command.Group heading="Providers" className="text-[11px] font-mono tracking-wider uppercase text-muted px-2 py-1.5">
+            <Command.Group heading="Providers" className="text-[10px] font-mono tracking-[0.08em] uppercase text-muted px-2 py-1.5">
               {activeResults.providers.map((p) => (
                 <Command.Item
                   key={p.id}
@@ -248,7 +251,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                     <span className="w-5 h-5 rounded-md bg-surface-raised border border-border flex items-center justify-center font-mono text-[10px] text-muted">
                       {p.name.slice(0, 2).toUpperCase()}
                     </span>
-                    <span className="font-medium truncate text-text">{p.name}</span>
+                    <span className="font-sans font-medium truncate text-text">{p.name}</span>
                   </div>
                   <span className="font-mono text-[11px] text-muted">
                     {p.hostedModelCount} models
