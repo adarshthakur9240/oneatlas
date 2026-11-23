@@ -81,6 +81,7 @@ model Model {
   compositeScore    Float?
   intelligenceScore Float?
   codingScore       Float?
+  scoreBasis        String? // "aa" | "vendor" | null
 
   capabilities String[]
 
@@ -96,6 +97,7 @@ model Model {
   @@index([blendedPrice])
   @@index([contextWindow])
   @@index([compositeScore])
+  @@index([scoreBasis])
   @@index([isOpenWeights])
   @@index([isDeprecated, releaseDate(sort: Desc)])
   @@index([capabilities], type: Gin)
