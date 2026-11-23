@@ -13,7 +13,7 @@
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 [![CI](https://img.shields.io/github/actions/workflow/status/adarshthakur9240/oneatlas/ci.yml?branch=main&label=CI&logo=github)](https://github.com/adarshthakur9240/oneatlas/actions)
 
-**[Live Application](https://oneatlas-lovat.vercel.app) · [Walkthrough Video](LOOM_URL_PLACEHOLDER) · [API Health](https://oneatlas-lovat.vercel.app/api/health) · [Repository](https://github.com/adarshthakur9240/oneatlas)**
+**[Live Application](https://oneatlas-lovat.vercel.app) · [Walkthrough Video](https://www.loom.com/share/c26d9ec5de514948b982c1fa8c09addd) · [API Health](https://oneatlas-lovat.vercel.app/api/health) · [Repository](https://github.com/adarshthakur9240/oneatlas)**
 
 </div>
 
@@ -1226,11 +1226,13 @@ oneatlas/
 
 ## 17. Walkthrough Video
 
-A complete 5-minute technical walkthrough and Loom demonstration covering the platform architecture, model comparison, rankings methodology, and production deployment is available at:
+A comprehensive technical walkthrough and live product demonstration covering the platform architecture, multi-model comparison matrix with tie suppression, Artificial Analysis rankings isolation, and production deployment is available at:
 
 <div align="center">
 
-### **[LOOM_URL_PLACEHOLDER]**
+[![Watch Walkthrough](https://img.shields.io/badge/Loom_Walkthrough-Watch_Video-625df5?style=for-the-badge&logo=loom&logoColor=white)](https://www.loom.com/share/c26d9ec5de514948b982c1fa8c09addd)
+
+### **[Watch the OneAtlas Technical Walkthrough on Loom (5 min)](https://www.loom.com/share/c26d9ec5de514948b982c1fa8c09addd)**
 
 *(Walkthrough covers: Catalog Discovery · Command Palette · Comparison Matrix with Tie Suppression · Artificial Analysis Rankings · Neon Serverless Pooling · CI Architecture)*
 

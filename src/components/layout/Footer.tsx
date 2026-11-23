@@ -47,6 +47,14 @@ export function Footer() {
             Providers
           </Link>
           <a
+            href="https://www.loom.com/share/c26d9ec5de514948b982c1fa8c09addd"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-text transition-colors"
+          >
+            Walkthrough
+          </a>
+          <a
             href={repoUrl}
             target="_blank"
             rel="noopener noreferrer"
