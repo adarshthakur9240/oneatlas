@@ -114,10 +114,16 @@ async function runE2ESuite() {
     (html) => html.includes("Interactive Cost Calculator") && html.includes("Inference Providers")
   );
 
-  // 3. Compare Page with 3 slugs
+  // 3. Compare Page with raw commas & encoded commas
   await testPage(
     `Compare Page (/compare?models=${presetSlugs})`,
     `/compare?models=${presetSlugs}`,
+    200,
+    (html) => html.includes("Compare AI Models")
+  );
+  await testPage(
+    `Compare Page with encoded commas (/compare?models=${encodeURIComponent(presetSlugs)})`,
+    `/compare?models=${encodeURIComponent(presetSlugs)}`,
     200,
     (html) => html.includes("Compare AI Models")
   );

@@ -561,6 +561,10 @@ async function runSuite() {
         for (let i = 0; i < json.data.length; i++) {
           assert(json.data[i].rank === i + 1, `Rank mismatch at index ${i}`);
           assert(typeof json.data[i].score === "number", "Expected numeric score");
+          assert(
+            json.data[i].scoreBasis === "aa" || json.data[i].model.scoreBasis === "aa",
+            `Expected scoreBasis=aa on default ranking row ${i}`
+          );
         }
       }
     }
