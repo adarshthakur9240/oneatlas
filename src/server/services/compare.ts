@@ -39,15 +39,17 @@ export async function compareModels(slugs: string[]): Promise<CompareResultDto> 
     );
   }
 
-  // Compute Winners (ties return all tied slugs)
+  // Compute Winners (ties return all tied slugs only when at least one model is strictly worse)
   function findMinWinners(
     getter: (m: ModelDetailDto) => number | null
   ): string[] {
     let minVal: number | null = null;
     const tied: string[] = [];
+    let validCount = 0;
     for (const m of models) {
       const v = getter(m);
       if (v === null || isNaN(v)) continue;
+      validCount++;
       if (minVal === null || v < minVal) {
         minVal = v;
         tied.length = 0;
@@ -55,6 +57,9 @@ export async function compareModels(slugs: string[]): Promise<CompareResultDto> 
       } else if (v === minVal) {
         tied.push(m.slug);
       }
+    }
+    if (validCount <= 1 || tied.length === validCount) {
+      return [];
     }
     return tied;
   }
@@ -64,9 +69,11 @@ export async function compareModels(slugs: string[]): Promise<CompareResultDto> 
   ): string[] {
     let maxVal: number | null = null;
     const tied: string[] = [];
+    let validCount = 0;
     for (const m of models) {
       const v = getter(m);
       if (v === null || isNaN(v)) continue;
+      validCount++;
       if (maxVal === null || v > maxVal) {
         maxVal = v;
         tied.length = 0;
@@ -74,6 +81,9 @@ export async function compareModels(slugs: string[]): Promise<CompareResultDto> 
       } else if (v === maxVal) {
         tied.push(m.slug);
       }
+    }
+    if (validCount <= 1 || tied.length === validCount) {
+      return [];
     }
     return tied;
   }
@@ -108,9 +118,11 @@ export async function compareModels(slugs: string[]): Promise<CompareResultDto> 
   for (const bSlug of allBenchmarkSlugs) {
     let maxScore: number | null = null;
     const tied: string[] = [];
+    let validCount = 0;
     for (const m of models) {
       const bScore = m.benchmarks.find((b) => b.benchmark.slug === bSlug)?.score;
       if (bScore === undefined || bScore === null || isNaN(bScore)) continue;
+      validCount++;
       if (maxScore === null || bScore > maxScore) {
         maxScore = bScore;
         tied.length = 0;
@@ -119,7 +131,8 @@ export async function compareModels(slugs: string[]): Promise<CompareResultDto> 
         tied.push(m.slug);
       }
     }
-    benchmarkWinners[bSlug] = tied;
+    benchmarkWinners[bSlug] =
+      validCount > 1 && tied.length < validCount ? tied : [];
   }
 
   // Intelligence winner: only crown winner among models with the same scoreBasis

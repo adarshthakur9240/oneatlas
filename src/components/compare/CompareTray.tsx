@@ -11,7 +11,7 @@ export function CompareTray() {
 
   if (slugs.length === 0) return null;
 
-  const compareUrl = `/compare?models=${encodeURIComponent(slugs.join(","))}`;
+  const compareUrl = `/compare?models=${slugs.join(",")}`;
   const canCompare = slugs.length >= 2;
 
   return (

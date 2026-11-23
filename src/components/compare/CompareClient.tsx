@@ -37,11 +37,15 @@ export function CompareClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // Read slugs from URL parameter: ?models=slug1,slug2,...
+  // Read slugs from URL parameter: ?models=slug1,slug2,... (accepts raw commas and %2C)
   const modelsParam = searchParams.get("models");
   const urlSlugs = React.useMemo(() => {
     if (!modelsParam) return [];
-    return modelsParam.split(",").map((s) => s.trim()).filter(Boolean);
+    const decoded = decodeURIComponent(modelsParam);
+    return decoded
+      .split(/[,\s]+/)
+      .map((s) => s.trim())
+      .filter(Boolean);
   }, [modelsParam]);
 
   const activeSlugs = urlSlugs;
@@ -76,11 +80,11 @@ export function CompareClient() {
   const [calcRequests, setCalcRequests] = React.useState(100000);
   const [calcHitRate, setCalcHitRate] = React.useState(0);
 
-  // Update URL helper
+  // Update URL helper: writes raw commas (/compare?models=a,b)
   const updateUrl = (nextSlugs: string[]) => {
     const deduped = Array.from(new Set(nextSlugs)).slice(0, 4);
     if (deduped.length > 0) {
-      router.push(`/compare?models=${encodeURIComponent(deduped.join(","))}`);
+      router.push(`/compare?models=${deduped.join(",")}`);
     } else {
       router.push("/compare");
     }
@@ -367,6 +371,8 @@ export function CompareClient() {
                                   <div>
                                     <Link
                                       href={`/models/${m.slug}`}
+                                      title={m.name}
+                                      aria-label={m.name}
                                       className="font-medium text-sm text-text hover:underline truncate block"
                                     >
                                       {displayName(m)}
