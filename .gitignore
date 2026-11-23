@@ -62,5 +62,7 @@ scripts/ralph/
 scripts/search_repo.*
 scripts/setup_search.*
 scripts/validate-*
-docs/
+docs/*
 !docs/DEPLOY.md
+!docs/assets/
+!docs/screens/

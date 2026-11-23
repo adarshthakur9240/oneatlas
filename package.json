@@ -20,7 +20,8 @@
     "typecheck": "tsc --noEmit",
     "test:db-resilience": "tsx scripts/test-db-resilience.ts",
     "test:pages": "tsx scripts/e2e-smoke.ts",
-    "test:api": "tsx scripts/api-smoke.ts"
+    "test:api": "tsx scripts/api-smoke.ts",
+    "docs:check": "tsx scripts/check-readme-assets.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
