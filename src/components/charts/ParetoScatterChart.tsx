@@ -3,6 +3,7 @@
 
 import React from "react";
 import dynamic from "next/dynamic";
+import { displayName } from "@/lib/formatters";
 import {
   Scatter,
   XAxis,
@@ -16,7 +17,7 @@ import {
 import type { ParetoPoint } from "@/lib/pareto";
 
 interface ParetoScatterChartProps {
-  allPoints: Array<ParetoPoint & { isFrontier?: boolean }>;
+  allPoints: Array<ParetoPoint & { isFrontier?: boolean; fullName?: string }>;
   frontierPoints: ParetoPoint[];
   scoreLabel?: string;
 }
@@ -30,6 +31,7 @@ function InnerParetoScatterChart({
   // Free models (price 0) are plotted at axis floor e.g. 0.01 with a note
   const processedPoints = allPoints.map((p) => ({
     ...p,
+    fullName: p.fullName || p.name,
     plotPrice: p.price === 0 ? 0.02 : p.price,
     displayPrice: p.price === 0 ? "Free ($0.00)" : `$${p.price.toFixed(3)}`,
   }));
@@ -75,6 +77,11 @@ function InnerParetoScatterChart({
     return `$${v}`;
   };
 
+  const yAxisTitle =
+    scoreLabel.includes("Artificial Analysis") || scoreLabel === "Intelligence Score"
+      ? "Intelligence Index"
+      : scoreLabel;
+
   return (
     <div className="w-full space-y-3">
       <div className="flex flex-wrap items-center justify-between text-xs font-mono text-muted gap-2">
@@ -119,12 +126,12 @@ function InnerParetoScatterChart({
             <YAxis
               type="number"
               dataKey="score"
-              name={scoreLabel}
+              name={yAxisTitle}
               domain={[0, 100]}
               stroke="#6f6b62"
               tick={{ fill: "#9b968b", fontSize: 11, fontFamily: "var(--font-mono)" }}
               label={{
-                value: scoreLabel,
+                value: yAxisTitle,
                 angle: -90,
                 position: "insideLeft",
                 fill: "#9b968b",
@@ -142,7 +149,13 @@ function InnerParetoScatterChart({
                   return (
                     <div className="bg-surface-raised border border-border-strong rounded-lg p-3 shadow-2xl text-xs font-mono max-w-xs">
                       <div className="flex items-center justify-between gap-2 mb-1">
-                        <span className="font-semibold text-text truncate">{data.name}</span>
+                        <span
+                          className="font-semibold text-text truncate"
+                          title={data.fullName || data.name}
+                          aria-label={data.fullName || data.name}
+                        >
+                          {displayName(data.name)}
+                        </span>
                         {isF && (
                           <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-sm bg-[#8fc49a]/20 text-[#8fc49a] border border-[#8fc49a]/30">
                             Pareto Efficient
@@ -156,7 +169,7 @@ function InnerParetoScatterChart({
                           <span className="text-text font-bold tabular-nums">{data.displayPrice}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-muted">{scoreLabel}:</span>
+                          <span className="text-muted">{yAxisTitle}:</span>
                           <span className="text-text font-bold tabular-nums">{data.score.toFixed(1)}</span>
                         </div>
                       </div>

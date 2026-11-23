@@ -3,6 +3,7 @@
 
 import React from "react";
 import dynamic from "next/dynamic";
+import { displayName } from "@/lib/formatters";
 import {
   BarChart,
   Bar,
@@ -17,6 +18,7 @@ import {
 export interface Top10Item {
   rank: number;
   name: string;
+  fullName?: string;
   score: number;
   lab: string;
   unit?: string;
@@ -42,11 +44,21 @@ function InnerTop10BarChart({
   }
 
   // Preserve descending order: rank 1 at the top, rank 10 at the bottom
-  const chartData = [...data];
+  // Map names through displayName() so Y-axis labels strip leading lab prefixes
+  const chartData = data.map((d) => ({
+    ...d,
+    fullName: d.fullName || d.name,
+    name: displayName(d.name),
+  }));
 
   // Headroom for score labels placed at the end of each bar
   const maxScore = Math.max(...chartData.map((d) => d.score), 100);
   const domainMax = Math.ceil(maxScore > 100 ? maxScore * 1.08 : 100);
+
+  const cleanUnit = unit.trim();
+  const axisTitle = cleanUnit ? `${scoreLabel} (${cleanUnit})` : scoreLabel;
+  const isElo = cleanUnit === "Elo";
+  const xTicks = isElo ? undefined : [0, 25, 50, 75, 100];
 
   return (
     <div className="w-full space-y-3">
@@ -55,17 +67,25 @@ function InnerTop10BarChart({
           <BarChart
             layout="vertical"
             data={chartData}
-            margin={{ top: 10, right: 48, left: 20, bottom: 10 }}
+            margin={{ top: 10, right: 48, left: 20, bottom: 20 }}
           >
             <CartesianGrid strokeDasharray="3 3" stroke="#2e2d2a" horizontal={false} />
             <XAxis
               type="number"
               domain={[0, domainMax]}
+              ticks={xTicks}
               stroke="#6f6b62"
               tick={{ fill: "#9b968b", fontSize: 11, fontFamily: "var(--font-mono)" }}
               tickLine={false}
               axisLine={{ stroke: "#2e2d2a" }}
-              unit={unit}
+              label={{
+                value: axisTitle,
+                position: "insideBottom",
+                offset: -10,
+                fill: "#9b968b",
+                fontSize: 10,
+                fontFamily: "var(--font-mono)",
+              }}
             />
             <YAxis
               type="category"
@@ -82,7 +102,9 @@ function InnerTop10BarChart({
                   const item = payload[0].payload as Top10Item;
                   return (
                     <div className="bg-surface-raised border border-border-strong rounded-lg p-2.5 shadow-xl text-xs font-mono">
-                      <div className="font-semibold text-text">{item.name}</div>
+                      <div className="font-semibold text-text" title={item.fullName || item.name}>
+                        {displayName(item.name)}
+                      </div>
                       <div className="text-[11px] text-muted mb-1.5">{item.lab} · Rank #{item.rank}</div>
                       <div className="flex items-center gap-2">
                         <span className="text-muted">{scoreLabel}:</span>

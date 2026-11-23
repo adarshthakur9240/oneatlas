@@ -149,6 +149,7 @@ export function RankingsClient() {
   const top10Data: Top10Item[] = rows.slice(0, 10).map((r) => ({
     rank: r.rank,
     name: displayName(r.model),
+    fullName: r.model.name,
     score: r.score,
     lab: r.model.lab.name,
     unit: activeBmUnit,
@@ -160,6 +161,7 @@ export function RankingsClient() {
     .map((r) => ({
       slug: r.model.slug,
       name: displayName(r.model),
+      fullName: r.model.name,
       lab: r.model.lab.name,
       price: r.blendedPrice ?? 0,
       score: r.score,
@@ -450,6 +452,8 @@ export function RankingsClient() {
                             <div className="flex flex-col min-w-0">
                               <Link
                                 href={`/models/${r.model.slug}`}
+                                title={r.model.name}
+                                aria-label={r.model.name}
                                 className="font-medium text-text hover:underline text-xs truncate max-w-[220px]"
                               >
                                 {displayName(r.model)}
