@@ -190,6 +190,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                   value={`model-${model.slug}-${model.name}`}
                   onSelect={() => navigate(`/models/${model.slug}`)}
                   title={model.name}
+                  aria-label={model.name}
                   className="flex items-center justify-between px-3 py-2 text-xs text-text rounded-[8px] cursor-pointer hover:bg-surface-raised aria-selected:bg-surface-raised select-none transition-colors"
                 >
                   <div className="flex items-center gap-2.5 min-w-0">

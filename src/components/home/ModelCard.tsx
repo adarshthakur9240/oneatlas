@@ -50,6 +50,7 @@ export function ModelCard({ model }: ModelCardProps) {
                 <Link
                   href={`/models/${model.slug}`}
                   title={model.name}
+                  aria-label={model.name}
                   className="font-medium text-sm text-text hover:underline truncate group-hover:text-white"
                 >
                   {displayName(model)}

@@ -200,6 +200,7 @@ export function ModelTable({
                         <Link
                           href={`/models/${m.slug}`}
                           title={m.name}
+                          aria-label={m.name}
                           className="font-medium text-text hover:underline truncate group-hover:text-white"
                         >
                           {displayName(m)}

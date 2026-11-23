@@ -97,48 +97,30 @@ export function timeAgo(date: string | Date | null | undefined): string {
 }
 
 /**
- * Strips leading "{lab.name}: " prefix from model names
- * (e.g. "Anthropic: Claude 3.5 Sonnet" -> "Claude 3.5 Sonnet")
+ * Strips ANY leading "<Prefix>: " from model names
+ * (e.g. "SpaceXSI: Grok 4.7" -> "Grok 4.7", "OpenAI: o3" -> "o3", "Anthropic: Claude 3.5 Sonnet" -> "Claude 3.5 Sonnet")
  */
-export function displayName(model: {
-  name: string;
-  lab?: { name?: string | null; slug?: string | null } | null;
-}): string {
-  if (!model || !model.name) return "";
-  const name = model.name.trim();
+export function displayName(
+  model:
+    | {
+        name: string;
+        lab?: { name?: string | null; slug?: string | null } | null;
+      }
+    | string
+    | null
+    | undefined
+): string {
+  if (!model) return "";
+  const rawName = typeof model === "string" ? model : model.name;
+  if (!rawName) return "";
+  const name = rawName.trim();
 
-  // If lab is provided, check if model.name starts with "{lab.name}:" or "{lab.slug}:"
-  if (model.lab) {
-    const labName = model.lab.name?.trim();
-    if (labName && name.toLowerCase().startsWith(`${labName.toLowerCase()}:`)) {
-      return name.slice(labName.length + 1).trim();
-    }
-    const labSlug = model.lab.slug?.trim();
-    if (labSlug && name.toLowerCase().startsWith(`${labSlug.toLowerCase()}:`)) {
-      return name.slice(labSlug.length + 1).trim();
-    }
-  }
-
-  // Also check generic pattern: if it matches "^([^:]+):\s*(.+)$"
+  // Strip ANY leading "<Prefix>: " where there is content after the colon
   const colonIndex = name.indexOf(":");
-  if (colonIndex > 0 && colonIndex < 30) {
-    const prefix = name.slice(0, colonIndex).trim().toLowerCase();
-    const labName = model.lab?.name?.trim().toLowerCase();
-    const labSlug = model.lab?.slug?.trim().toLowerCase();
-    const normPrefix = prefix.replace(/[^a-z0-9]/g, "");
-    const normLabName = labName ? labName.replace(/[^a-z0-9]/g, "") : "";
-    const normLabSlug = labSlug ? labSlug.replace(/[^a-z0-9]/g, "") : "";
-    if (
-      (normLabName &&
-        (normPrefix === normLabName ||
-          normLabName.startsWith(normPrefix) ||
-          normPrefix.startsWith(normLabName))) ||
-      (normLabSlug &&
-        (normPrefix === normLabSlug ||
-          normLabSlug.startsWith(normPrefix) ||
-          normPrefix.startsWith(normLabSlug)))
-    ) {
-      return name.slice(colonIndex + 1).trim();
+  if (colonIndex > 0) {
+    const after = name.slice(colonIndex + 1).trim();
+    if (after) {
+      return after;
     }
   }
 
