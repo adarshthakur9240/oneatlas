@@ -197,6 +197,62 @@ async function main(): Promise<void> {
     `Slugs are unique and URL-safe (${allModels.length} models: ${duplicateSlugs} duplicates, ${unsafeSlugs} unsafe)`
   );
 
+  // ── 9. Score Basis Integrity (No mixed-basis scores) ────────────────────────
+  const modelsWithBasis = await prisma.model.findMany({
+    where: {
+      OR: [
+        { scoreBasis: { not: null } },
+        { compositeScore: { not: null } },
+        { intelligenceScore: { not: null } },
+      ],
+    },
+    include: {
+      benchmarkScores: {
+        include: { benchmark: { select: { slug: true } } },
+      },
+    },
+  });
+
+  let basisViolations = 0;
+  for (const m of modelsWithBasis) {
+    const aaIntel = m.benchmarkScores.find(
+      (b) => b.benchmark.slug === "intelligence-index"
+    );
+
+    if (m.scoreBasis === "aa") {
+      if (!aaIntel) {
+        console.error(`  ⚠️  Model ${m.sourceId} has scoreBasis="aa" but no AA intelligence-index`);
+        basisViolations++;
+      }
+      if (m.compositeScore !== aaIntel?.score || m.intelligenceScore !== aaIntel?.score) {
+        console.error(
+          `  ⚠️  Model ${m.sourceId} has scoreBasis="aa" but compositeScore (${m.compositeScore}) or intelligenceScore (${m.intelligenceScore}) does not match AA index (${aaIntel?.score})`
+        );
+        basisViolations++;
+      }
+    } else if (m.scoreBasis === "vendor") {
+      if (aaIntel) {
+        console.error(`  ⚠️  Model ${m.sourceId} has scoreBasis="vendor" but contains an AA intelligence-index`);
+        basisViolations++;
+      }
+    } else if (m.scoreBasis === null) {
+      if (m.compositeScore !== null || m.intelligenceScore !== null) {
+        console.error(
+          `  ⚠️  Model ${m.sourceId} has scoreBasis=null but has compositeScore (${m.compositeScore}) or intelligenceScore (${m.intelligenceScore})`
+        );
+        basisViolations++;
+      }
+    } else {
+      console.error(`  ⚠️  Model ${m.sourceId} has invalid scoreBasis: "${m.scoreBasis}"`);
+      basisViolations++;
+    }
+  }
+
+  assert(
+    basisViolations === 0,
+    `No model has mixed-basis or corrupted scoreBasis (${modelsWithBasis.length} scored models checked, ${basisViolations} violations)`
+  );
+
   console.log("\n--------------------------------------------------");
   console.log("               Spot Checks & Eyeball              ");
   console.log("--------------------------------------------------\n");

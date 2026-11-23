@@ -156,10 +156,10 @@ export default async function BenchmarksPage() {
             <div className="space-y-2.5">
               <div className="flex items-center gap-2 text-text font-medium text-sm">
                 <CheckCircle2 className="w-4 h-4 text-[#8fc49a]" />
-                <span>Composite Intelligence Index</span>
+                <span>Strict Scoring Bases (AA vs. Vendor)</span>
               </div>
               <p>
-                A model&apos;s Composite Score is computed as the arithmetic mean of at least two verified normalized benchmark scores across general reasoning and software engineering. Models with fewer than two benchmarks remain unranked.
+                To avoid misleading comparisons, OneAtlas strictly segregates scoring bases. Independent evaluations from Artificial Analysis use a calibrated 0–100 index (where current frontier models score ~55–65). Vendor-reported scores (MMLU-Pro, GPQA) reflect raw accuracy percentages from research papers. We never average or cross-rank across different bases. Vendor-reported scores are marked with a dagger (†).
               </p>
             </div>
 

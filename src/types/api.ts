@@ -78,6 +78,7 @@ export interface ModelSummaryDto {
   intelligenceScore: number | null;
   codingScore: number | null;
   compositeScore: number | null;
+  scoreBasis: "aa" | "vendor" | null;
 }
 
 export interface ModelProviderDto {
@@ -220,6 +221,9 @@ export interface CompareWinnersDto {
   largestMaxOutput: string[];
   fastestThroughput: string[];
   highestUptime: string[];
+  highestIntelligence?: string[];
+  sameBasis?: boolean;
+  scoreBasis?: "aa" | "vendor" | null;
   benchmarks: Record<string, string[]>;
 }
 
@@ -241,6 +245,7 @@ export interface RankingRowDto {
   rank: number;
   model: ModelSummaryDto;
   score: number;
+  scoreBasis?: "aa" | "vendor" | null;
   blendedPrice: number | null;
   valueIndex: number | null;
   isFree: boolean;

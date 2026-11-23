@@ -137,6 +137,7 @@ erDiagram
         float intelligenceScore
         float codingScore
         float compositeScore
+        string scoreBasis
         boolean isOpenWeights
         boolean isDeprecated
         datetime releaseDate
@@ -207,6 +208,10 @@ erDiagram
 
 ### Benchmark Honesty Policy
 - **Verified Benchmark Sources:** Scores are strictly seeded from verified, peer-reviewed evaluation leaderboards (SWE-bench Verified, MMLU-Pro, GPQA Diamond, LiveCodeBench) and independent third-party evaluations from [Artificial Analysis](https://artificialanalysis.ai/) (Intelligence Index, Engineering Index, Domain evaluations).
+- **Strict Scoring Bases (`scoreBasis: "aa" | "vendor"`):** Artificial Analysis uses a calibrated 0–100 index (where current frontier models score ~55–65), whereas vendor-reported benchmarks (MMLU-Pro, GPQA) are raw accuracy percentages from research reports where older models achieved 80–85%. To prevent misleading rankings, OneAtlas never averages or cross-ranks across different scoring bases:
+  - Models with an AA Intelligence Index have `scoreBasis = "aa"`, with `intelligenceScore` and `compositeScore` set directly from that index.
+  - Earlier models with only vendor-reported scores have `scoreBasis = "vendor"`, marked with a dagger (`†`) and tooltip indicating they are not comparable to the AA Index.
+  - Winner logic in `/compare` only crowns winners when all compared models share the same `scoreBasis`.
 - **Additive Ingestion:** Vendor-reported evaluations (`isVendorReported = true`) are preserved and never overwritten; Artificial Analysis independent evaluations (`isVendorReported = false`) fill gaps under strict deterministic model matching.
 - **Coverage Disclosure:** Models lacking verified evaluations are left as `null` rather than estimated. The platform transparently displays an honesty badge and excludes unverified models from benchmark rankings.
 

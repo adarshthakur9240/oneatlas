@@ -46,6 +46,8 @@ export async function getRankings(
     const where: Prisma.ModelWhereInput = {
       ...baseModelWhere,
       [scoreField]: { not: null },
+      ...(benchmark === "composite" ? { scoreBasis: "vendor" } : {}),
+      ...(benchmark === "intelligence" ? { scoreBasis: "aa" } : {}),
     };
 
     const [count, models] = await Promise.all([
@@ -75,6 +77,7 @@ export async function getRankings(
         rank: idx + 1,
         model: toSummaryDto(m),
         score,
+        scoreBasis: (m.scoreBasis as "aa" | "vendor" | null) ?? null,
         blendedPrice: m.blendedPrice,
         valueIndex,
         isFree,
@@ -82,7 +85,7 @@ export async function getRankings(
       };
     });
   } else {
-    // Specific benchmark slug (e.g. mmlu-pro, gpqa-diamond, swe-bench-verified)
+    // Specific benchmark slug (e.g. intelligence-index, mmlu-pro, gpqa-diamond, swe-bench-verified)
     const benchmarkRecord = await prisma.benchmark.findUnique({
       where: { slug: benchmark },
       select: { id: true, slug: true, name: true, unit: true },
@@ -131,10 +134,15 @@ export async function getRankings(
           ? Math.round((entry.score / m.blendedPrice) * 100) / 100
           : null;
 
+      const basis: "aa" | "vendor" | null =
+        (m.scoreBasis as "aa" | "vendor" | null) ??
+        (entry.isVendorReported ? "vendor" : "aa");
+
       return {
         rank: idx + 1,
         model: toSummaryDto(m),
         score: entry.score,
+        scoreBasis: basis,
         blendedPrice: m.blendedPrice,
         valueIndex,
         isFree,

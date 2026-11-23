@@ -5,7 +5,8 @@ import * as React from "react";
 import Link from "next/link";
 import useSWR from "swr";
 import { useRouter, useSearchParams } from "next/navigation";
-import { displayName, formatPrice, formatContext, formatScore } from "@/lib/formatters";
+import { displayName, formatPrice, formatContext } from "@/lib/formatters";
+import { ScoreDisplay } from "@/components/ui/ScoreDisplay";
 import { estimateMonthlyCost } from "@/lib/cost";
 import { LabAvatar } from "@/components/ui/LabAvatar";
 import { Badge } from "@/components/ui/Badge";
@@ -615,17 +616,49 @@ export function CompareClient() {
                       </tr>
                       <tr>
                         <td className="py-2.5 px-4 text-muted sticky left-0 bg-background/90">Intelligence Index</td>
-                        {models.map((m) => (
-                          <td key={m.id} className="py-2.5 px-4 text-text font-bold tabular-nums border-l border-border/40">
-                            {formatScore(m.intelligenceScore)}
-                          </td>
-                        ))}
+                        {models.map((m) => {
+                          const won = isWinner(winners?.highestIntelligence, m.slug);
+                          return (
+                            <td
+                              key={m.id}
+                              className={`py-2.5 px-4 tabular-nums border-l border-border/40 ${
+                                won ? "bg-[#8fc49a]/10 text-[#8fc49a] font-bold" : "text-text font-bold"
+                              }`}
+                            >
+                              <div className="flex items-center justify-between gap-1">
+                                <ScoreDisplay
+                                  score={m.intelligenceScore}
+                                  scoreBasis={m.scoreBasis}
+                                />
+                                {won && (
+                                  <span className="text-[9px] uppercase px-1 py-0.2 rounded-xs bg-[#8fc49a]/20">
+                                    Best
+                                  </span>
+                                )}
+                              </div>
+                            </td>
+                          );
+                        })}
                       </tr>
+                      {!winners?.sameBasis &&
+                        models.filter((m) => m.intelligenceScore !== null).length > 1 && (
+                          <tr>
+                            <td
+                              colSpan={models.length + 1}
+                              className="py-1.5 px-4 text-[10px] font-mono text-muted/80 bg-surface/40 italic border-l border-border/40"
+                            >
+                              * Mixed scoring bases (AA Index vs. Vendor-reported) — not directly comparable. &ldquo;Best&rdquo; marker omitted.
+                            </td>
+                          </tr>
+                        )}
                       <tr>
                         <td className="py-2.5 px-4 text-muted sticky left-0 bg-background/90">Coding Index</td>
                         {models.map((m) => (
                           <td key={m.id} className="py-2.5 px-4 text-text font-bold tabular-nums border-l border-border/40">
-                            {formatScore(m.codingScore)}
+                            <ScoreDisplay
+                              score={m.codingScore}
+                              scoreBasis={m.scoreBasis}
+                            />
                           </td>
                         ))}
                       </tr>

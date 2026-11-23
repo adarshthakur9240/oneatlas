@@ -147,11 +147,47 @@ export async function ingestBenchmarks(): Promise<void> {
  * with benchmark scores. Re-exported so that both curated and AA ingestion steps
  * evaluate all existing BenchmarkScore rows additively.
  */
-export async function recomputeDerivedScores(): Promise<number> {
-  console.log("  🧮 Computing composite scores...");
+export interface RecomputeResult {
+  updated: number;
+  changes: Array<{
+    slug: string;
+    name: string;
+    old: {
+      scoreBasis: string | null;
+      compositeScore: number | null;
+      intelligenceScore: number | null;
+      codingScore: number | null;
+    };
+    new: {
+      scoreBasis: "aa" | "vendor" | null;
+      compositeScore: number | null;
+      intelligenceScore: number | null;
+      codingScore: number | null;
+    };
+    changed: boolean;
+  }>;
+}
+
+/**
+ * Recompute compositeScore, codingScore, intelligenceScore, and scoreBasis
+ * for all models with benchmark scores.
+ * - If model has AA intelligence index:
+ *     scoreBasis = "aa", compositeScore = intelligenceScore = that AA index,
+ *     codingScore = AA coding index if present, else null (vendor scores ignored).
+ * - Otherwise, if it has vendor-reported scores:
+ *     scoreBasis = "vendor", compositeScore = mean(vendor normalized >= 2),
+ *     intelligenceScore = mean(mmlu-pro, gpqa-diamond), codingScore = mean(swe-bench, livecodebench).
+ * - Otherwise:
+ *     scoreBasis = null, compositeScore = null, intelligenceScore = null, codingScore = null.
+ */
+export async function recomputeDerivedScores(options?: {
+  dryRun?: boolean;
+}): Promise<RecomputeResult> {
+  const dryRun = options?.dryRun ?? false;
+  console.log(`  🧮 Computing derived scores (dryRun=${dryRun})...`);
+
   const modelsWithScores = await prisma.model.findMany({
     where: {
-      isDeprecated: false,
       benchmarkScores: { some: {} },
     },
     include: {
@@ -159,54 +195,119 @@ export async function recomputeDerivedScores(): Promise<number> {
         include: { benchmark: { select: { slug: true } } },
       },
     },
+    orderBy: { slug: "asc" },
   });
 
+  const changes: RecomputeResult["changes"] = [];
   let updated = 0;
+
   for (const m of modelsWithScores) {
     const scores = m.benchmarkScores;
+    const aaIntelScore = scores.find((s) => s.benchmark.slug === "intelligence-index");
+    const aaCodingScore = scores.find((s) => s.benchmark.slug === "coding-index");
 
-    // compositeScore: mean over available scores ONLY if >= 2 exist
-    let compositeScore: number | null = null;
-    if (scores.length >= 2) {
-      const normalizedScores = scores.map((s) =>
-        normalizeBenchmark(s.benchmark.slug, s.score)
+    let newScoreBasis: "aa" | "vendor" | null = null;
+    let newCompositeScore: number | null = null;
+    let newIntelligenceScore: number | null = null;
+    let newCodingScore: number | null = null;
+
+    if (aaIntelScore) {
+      newScoreBasis = "aa";
+      newCompositeScore = aaIntelScore.score;
+      newIntelligenceScore = aaIntelScore.score;
+      newCodingScore = aaCodingScore ? aaCodingScore.score : null;
+    } else {
+      const vendorBmSlugs = new Set([
+        "mmlu-pro",
+        "gpqa-diamond",
+        "swe-bench-verified",
+        "livecodebench",
+        "arena-elo",
+      ]);
+      const vendorScores = scores.filter(
+        (s) => s.isVendorReported || vendorBmSlugs.has(s.benchmark.slug)
       );
-      compositeScore =
-        Math.round((normalizedScores.reduce((a, b) => a + b, 0) / normalizedScores.length) * 10) / 10;
+
+      if (vendorScores.length > 0) {
+        newScoreBasis = "vendor";
+
+        // compositeScore: mean over available vendor scores ONLY if >= 2 exist
+        if (vendorScores.length >= 2) {
+          const normalized = vendorScores.map((s) =>
+            normalizeBenchmark(s.benchmark.slug, s.score)
+          );
+          newCompositeScore =
+            Math.round(
+              (normalized.reduce((a, b) => a + b, 0) / normalized.length) * 10
+            ) / 10;
+        }
+
+        // codingScore: mean(swe-bench-verified, livecodebench) if >= 1
+        const codingSlugs = new Set(["swe-bench-verified", "livecodebench"]);
+        const coding = vendorScores
+          .filter((s) => codingSlugs.has(s.benchmark.slug))
+          .map((s) => normalizeBenchmark(s.benchmark.slug, s.score));
+        newCodingScore =
+          coding.length >= 1
+            ? Math.round((coding.reduce((a, b) => a + b, 0) / coding.length) * 10) / 10
+            : null;
+
+        // intelligenceScore: mean(mmlu-pro, gpqa-diamond) if >= 1
+        const intelSlugs = new Set(["mmlu-pro", "gpqa-diamond"]);
+        const intel = vendorScores
+          .filter((s) => intelSlugs.has(s.benchmark.slug))
+          .map((s) => normalizeBenchmark(s.benchmark.slug, s.score));
+        newIntelligenceScore =
+          intel.length >= 1
+            ? Math.round((intel.reduce((a, b) => a + b, 0) / intel.length) * 10) / 10
+            : null;
+      }
     }
 
-    // codingScore: mean(swe-bench-verified, livecodebench, coding-index) if >= 1 present
-    const codingBmSlugs = new Set(["swe-bench-verified", "livecodebench", "coding-index"]);
-    const codingScores = scores
-      .filter((s) => codingBmSlugs.has(s.benchmark.slug))
-      .map((s) => normalizeBenchmark(s.benchmark.slug, s.score));
-    const codingScore =
-      codingScores.length >= 1
-        ? Math.round((codingScores.reduce((a, b) => a + b, 0) / codingScores.length) * 10) / 10
-        : null;
+    const changed =
+      m.scoreBasis !== newScoreBasis ||
+      m.compositeScore !== newCompositeScore ||
+      m.intelligenceScore !== newIntelligenceScore ||
+      m.codingScore !== newCodingScore;
 
-    // intelligenceScore: mean(mmlu-pro, gpqa-diamond, intelligence-index) if >= 1 present
-    const intelBmSlugs = new Set(["mmlu-pro", "gpqa-diamond", "intelligence-index"]);
-    const intelScores = scores
-      .filter((s) => intelBmSlugs.has(s.benchmark.slug))
-      .map((s) => normalizeBenchmark(s.benchmark.slug, s.score));
-    const intelligenceScore =
-      intelScores.length >= 1
-        ? Math.round((intelScores.reduce((a, b) => a + b, 0) / intelScores.length) * 10) / 10
-        : null;
-
-    await prisma.model.update({
-      where: { id: m.id },
-      data: {
-        compositeScore,
-        codingScore,
-        intelligenceScore,
+    changes.push({
+      slug: m.slug,
+      name: m.name,
+      old: {
+        scoreBasis: m.scoreBasis,
+        compositeScore: m.compositeScore,
+        intelligenceScore: m.intelligenceScore,
+        codingScore: m.codingScore,
       },
+      new: {
+        scoreBasis: newScoreBasis,
+        compositeScore: newCompositeScore,
+        intelligenceScore: newIntelligenceScore,
+        codingScore: newCodingScore,
+      },
+      changed,
     });
-    if (compositeScore !== null) updated++;
+
+    if (!dryRun && changed) {
+      await prisma.model.update({
+        where: { id: m.id },
+        data: {
+          scoreBasis: newScoreBasis,
+          compositeScore: newCompositeScore,
+          intelligenceScore: newIntelligenceScore,
+          codingScore: newCodingScore,
+        },
+      });
+      updated++;
+    }
   }
 
-  console.log(`  ✅ Updated composite scores for ${updated} models`);
-  return updated;
+  if (dryRun) {
+    console.log(`  🔍 Dry-run complete: ${changes.filter((c) => c.changed).length} models would be updated.`);
+  } else {
+    console.log(`  ✅ Updated derived scores for ${updated} models`);
+  }
+
+  return { updated, changes };
 }
 

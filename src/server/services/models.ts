@@ -63,6 +63,7 @@ function toSummaryDto(m: {
   intelligenceScore: number | null;
   codingScore: number | null;
   compositeScore: number | null;
+  scoreBasis?: string | null;
   lab: {
     slug: string;
     name: string;
@@ -113,6 +114,7 @@ function toSummaryDto(m: {
     intelligenceScore: m.intelligenceScore,
     codingScore: m.codingScore,
     compositeScore: m.compositeScore,
+    scoreBasis: (m.scoreBasis as "aa" | "vendor" | null) ?? null,
   };
 }
 

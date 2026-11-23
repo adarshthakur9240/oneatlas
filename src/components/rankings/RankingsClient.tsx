@@ -6,7 +6,8 @@ import Link from "next/link";
 import useSWR from "swr";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCompare } from "@/lib/compare-store";
-import { displayName, formatPrice, formatContext, formatScore } from "@/lib/formatters";
+import { displayName, formatPrice, formatContext } from "@/lib/formatters";
+import { ScoreDisplay } from "@/components/ui/ScoreDisplay";
 import { paretoFrontier } from "@/lib/pareto";
 import { LabAvatar } from "@/components/ui/LabAvatar";
 import { Badge } from "@/components/ui/Badge";
@@ -26,14 +27,62 @@ import type { RankingRowDto } from "@/types/api";
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 const BENCHMARK_TABS = [
-  { slug: "composite", name: "Composite" },
-  { slug: "intelligence", name: "Intelligence" },
-  { slug: "coding", name: "Coding" },
-  { slug: "mmlu-pro", name: "MMLU-Pro" },
-  { slug: "swe-bench-verified", name: "SWE-bench Verified" },
-  { slug: "gpqa-diamond", name: "GPQA Diamond" },
-  { slug: "livecodebench", name: "LiveCodeBench" },
-  { slug: "arena-elo", name: "Arena Elo" },
+  {
+    slug: "intelligence-index",
+    name: "Artificial Analysis Intelligence Index",
+    shortName: "AA Intelligence",
+    unit: " Index",
+    basisNote: "Basis: Artificial Analysis calibrated index (0–100 scale, independent evaluation). Standardized multi-domain reasoning harness.",
+  },
+  {
+    slug: "composite",
+    name: "Vendor composite (earlier models)",
+    shortName: "Vendor composite",
+    unit: "%",
+    basisNote: "Basis: Vendor-reported composite normalized to 0–100 scale. Not directly comparable to the calibrated AA Index.",
+  },
+  {
+    slug: "coding-index",
+    name: "Artificial Analysis Coding Index",
+    shortName: "AA Coding",
+    unit: " Index",
+    basisNote: "Basis: Artificial Analysis coding index (0–100 scale, independent evaluation).",
+  },
+  {
+    slug: "mmlu-pro",
+    name: "MMLU-Pro",
+    shortName: "MMLU-Pro",
+    unit: "%",
+    basisNote: "Basis: Massive Multitask Language Understanding (Pro) accuracy percentage (vendor-reported).",
+  },
+  {
+    slug: "gpqa-diamond",
+    name: "GPQA Diamond",
+    shortName: "GPQA Diamond",
+    unit: "%",
+    basisNote: "Basis: Graduate-level Google-Proof Q&A accuracy percentage (vendor-reported).",
+  },
+  {
+    slug: "swe-bench-verified",
+    name: "SWE-bench Verified",
+    shortName: "SWE-bench Verified",
+    unit: "%",
+    basisNote: "Basis: Human-verified real GitHub issue resolution percentage (vendor-reported).",
+  },
+  {
+    slug: "livecodebench",
+    name: "LiveCodeBench",
+    shortName: "LiveCodeBench",
+    unit: "%",
+    basisNote: "Basis: Live competitive programming pass@1 percentage (vendor-reported).",
+  },
+  {
+    slug: "arena-elo",
+    name: "Chatbot Arena Elo",
+    shortName: "Arena Elo",
+    unit: " Elo",
+    basisNote: "Basis: LMSYS Chatbot Arena blind pairwise human-preference Elo rating.",
+  },
 ];
 
 const CATEGORY_FILTERS = [
@@ -50,10 +99,15 @@ export function RankingsClient() {
   const searchParams = useSearchParams();
   const { has, toggle } = useCompare();
 
-  const activeBenchmark = searchParams.get("benchmark") || "composite";
+  const activeBenchmark = searchParams.get("benchmark") || "intelligence-index";
   const activeCategory = searchParams.get("category") || "all";
   const [sortField, setSortField] = React.useState<"rank" | "score" | "price" | "value">("rank");
   const [sortAsc, setSortAsc] = React.useState(true);
+
+  const activeTab =
+    BENCHMARK_TABS.find((t) => t.slug === activeBenchmark) || BENCHMARK_TABS[0];
+  const activeBmTitle = activeTab.name;
+  const activeBmUnit = activeTab.unit;
 
   // Construct API query
   const queryParams = new URLSearchParams();
@@ -97,7 +151,7 @@ export function RankingsClient() {
     name: displayName(r.model),
     score: r.score,
     lab: r.model.lab.name,
-    unit: activeBenchmark === "arena-elo" ? " Elo" : "%",
+    unit: activeBmUnit,
   }));
 
   // Pareto Frontier computation
@@ -142,9 +196,6 @@ export function RankingsClient() {
       setSortAsc(field === "rank" || field === "price");
     }
   };
-
-  const activeBmTitle =
-    BENCHMARK_TABS.find((t) => t.slug === activeBenchmark)?.name || "Composite";
 
   return (
     <div className="w-full min-h-screen py-10 select-none">
@@ -210,23 +261,31 @@ export function RankingsClient() {
 
         {/* Honest Citation Banner */}
         <div
-          className="p-4 bg-surface border border-border rounded-xl flex items-start sm:items-center justify-between gap-4 text-xs font-mono text-muted"
+          className="p-4 bg-surface border border-border rounded-xl space-y-2 text-xs font-mono text-muted"
           aria-live="polite"
         >
-          <div className="flex items-center gap-2.5">
-            <Info className="w-4 h-4 text-accent-warn shrink-0" />
-            <span>
-              <strong className="text-text font-semibold">{scoredCount} of {totalCount}</strong> models
-              have published, cited scores for {activeBmTitle}. Models without scores are not ranked.
-            </span>
+          <div className="flex items-start sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-2.5">
+              <Info className="w-4 h-4 text-accent-warn shrink-0" />
+              <span>
+                Coverage: <strong className="text-text font-semibold">{scoredCount} of {totalCount}</strong> models
+                have published, cited scores for {activeBmTitle}. Models without scores are not ranked.
+              </span>
+            </div>
+            <Link
+              href="/benchmarks"
+              className="inline-flex items-center gap-1 text-text hover:underline shrink-0 font-medium"
+            >
+              <span>Methodology</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
           </div>
-          <Link
-            href="/benchmarks"
-            className="inline-flex items-center gap-1 text-text hover:underline shrink-0 font-medium"
-          >
-            <span>Methodology</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
+          {activeTab.basisNote && (
+            <div className="text-[11px] text-text/80 pl-6.5 border-t border-border/40 pt-1.5 font-sans">
+              <span className="font-mono text-muted uppercase text-[10px] mr-1.5">Note:</span>
+              {activeTab.basisNote}
+            </div>
+          )}
         </div>
 
         {/* Visual Charts Grid: Top-10 Bar Chart & Pareto Scatter Plot */}
@@ -246,7 +305,7 @@ export function RankingsClient() {
             <Top10BarChart
               data={top10Data}
               scoreLabel={activeBmTitle}
-              unit={activeBenchmark === "arena-elo" ? " Elo" : "%"}
+              unit={activeBmUnit}
             />
           </div>
 
@@ -404,10 +463,11 @@ export function RankingsClient() {
 
                         {/* Score */}
                         <td className="py-2.5 px-3 text-right font-bold text-text tabular-nums">
-                          {formatScore(r.score)}
-                          <span className="text-muted text-[11px] font-normal ml-0.5">
-                            {activeBenchmark === "arena-elo" ? " Elo" : "%"}
-                          </span>
+                          <ScoreDisplay
+                            score={r.score}
+                            scoreBasis={r.scoreBasis}
+                            unit={activeBmUnit}
+                          />
                         </td>
 
                         {/* Blended Price */}

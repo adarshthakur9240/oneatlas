@@ -97,6 +97,7 @@ interface ModelSummaryRow {
   minInputPrice: number | null;
   minOutputPrice: number | null;
   blendedPrice: number | null;
+  scoreBasis?: "aa" | "vendor" | null;
 }
 
 interface ModelDetailRow extends ModelSummaryRow {
@@ -144,6 +145,7 @@ interface RankingItem {
   rank: number;
   model: ModelSummaryRow;
   score: number;
+  scoreBasis?: "aa" | "vendor" | null;
   valueIndex: number | null;
 }
 
@@ -548,7 +550,24 @@ async function runSuite() {
 
   // 9. Rankings endpoint
   await test<RankingItem[]>(
-    "GET /api/rankings?benchmark=composite returns ranked models with valueIndex",
+    "GET /api/rankings (default) returns AA intelligence index rankings",
+    "/api/rankings?limit=10",
+    (res, json) => {
+      assert(res.status === 200, `Expected 200, got ${res.status}`);
+      assert(json.success === true, "Expected success: true");
+      if (json.success) {
+        assert(json.data.length > 0, "Expected ranked rows");
+        assert(json.meta?.benchmark === "intelligence-index", "Expected default benchmark to be intelligence-index");
+        for (let i = 0; i < json.data.length; i++) {
+          assert(json.data[i].rank === i + 1, `Rank mismatch at index ${i}`);
+          assert(typeof json.data[i].score === "number", "Expected numeric score");
+        }
+      }
+    }
+  );
+
+  await test<RankingItem[]>(
+    "GET /api/rankings?benchmark=composite returns vendor composite rankings",
     "/api/rankings?benchmark=composite&limit=10",
     (res, json) => {
       assert(res.status === 200, `Expected 200, got ${res.status}`);
@@ -558,6 +577,10 @@ async function runSuite() {
         for (let i = 0; i < json.data.length; i++) {
           assert(json.data[i].rank === i + 1, `Rank mismatch at index ${i}`);
           assert(typeof json.data[i].score === "number", "Expected numeric score");
+          assert(
+            json.data[i].scoreBasis === "vendor" || json.data[i].model.scoreBasis === "vendor",
+            `Expected scoreBasis=vendor on composite ranking row ${i}`
+          );
         }
       }
     }

@@ -169,9 +169,11 @@ export const CompareQuerySchema = z
 export type CompareQuery = z.infer<typeof CompareQuerySchema>;
 
 export const BenchmarkMetricSchema = z.enum([
+  "intelligence-index",
   "composite",
   "intelligence",
   "coding",
+  "coding-index",
   "mmlu-pro",
   "swe-bench-verified",
   "gpqa-diamond",
@@ -181,7 +183,7 @@ export const BenchmarkMetricSchema = z.enum([
 
 export const RankingsQuerySchema = z
   .object({
-    benchmark: BenchmarkMetricSchema.default("composite"),
+    benchmark: BenchmarkMetricSchema.default("intelligence-index"),
     type: csv.pipe(z.array(ModelTypeSchema)),
     openWeights: boolish,
     limit: z

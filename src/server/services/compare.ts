@@ -122,6 +122,19 @@ export async function compareModels(slugs: string[]): Promise<CompareResultDto> 
     benchmarkWinners[bSlug] = tied;
   }
 
+  // Intelligence winner: only crown winner among models with the same scoreBasis
+  const scoredModels = models.filter(
+    (m) => m.intelligenceScore !== null && m.scoreBasis !== null
+  );
+  const firstBasis = scoredModels[0]?.scoreBasis ?? null;
+  const sameBasis =
+    scoredModels.length > 0 &&
+    scoredModels.every((m) => m.scoreBasis === firstBasis);
+
+  const highestIntelligence = sameBasis
+    ? findMaxWinners((m) => m.intelligenceScore)
+    : [];
+
   const winners: CompareWinnersDto = {
     cheapestInput,
     cheapestOutput,
@@ -130,6 +143,9 @@ export async function compareModels(slugs: string[]): Promise<CompareResultDto> 
     largestMaxOutput,
     fastestThroughput,
     highestUptime,
+    highestIntelligence,
+    sameBasis,
+    scoreBasis: sameBasis ? firstBasis : null,
     benchmarks: benchmarkWinners,
   };
 

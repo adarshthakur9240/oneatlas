@@ -4,7 +4,8 @@
 import Link from "next/link";
 import { LabAvatar } from "@/components/ui/LabAvatar";
 import { Badge } from "@/components/ui/Badge";
-import { formatPrice, formatContext, formatScore, displayName } from "@/lib/formatters";
+import { formatPrice, formatContext, displayName } from "@/lib/formatters";
+import { ScoreDisplay } from "@/components/ui/ScoreDisplay";
 import { useCompare } from "@/lib/compare-store";
 import { Check, Plus, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import type { ModelSummaryDto } from "@/types/api";
@@ -302,13 +303,11 @@ export function ModelTable({
 
                 {/* INTELLIGENCE SCORE */}
                 <td className="py-2 px-2 text-right font-mono text-xs tabular-nums">
-                  {m.intelligenceScore !== null ? (
-                    <span className="text-text font-medium">
-                      {formatScore(m.intelligenceScore)}
-                    </span>
-                  ) : (
-                    <span className="text-muted/40">—</span>
-                  )}
+                  <ScoreDisplay
+                    score={m.intelligenceScore}
+                    scoreBasis={m.scoreBasis}
+                    className="font-medium text-text justify-end"
+                  />
                 </td>
 
                 {/* RELEASED */}

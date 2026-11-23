@@ -5,6 +5,7 @@ import Link from "next/link";
 import { LabAvatar } from "@/components/ui/LabAvatar";
 import { Badge } from "@/components/ui/Badge";
 import { formatPrice, formatContext, formatScore, displayName } from "@/lib/formatters";
+import { ScoreDisplay } from "@/components/ui/ScoreDisplay";
 import { useCompare } from "@/lib/compare-store";
 import { Check, Plus, ArrowRight } from "lucide-react";
 import type { ModelSummaryDto } from "@/types/api";
@@ -191,7 +192,10 @@ export function ModelCard({ model }: ModelCardProps) {
                 Intel.
               </div>
               <div className="font-mono text-xs font-medium text-text mt-1 tabular-nums">
-                {formatScore(model.intelligenceScore)}
+                <ScoreDisplay
+                  score={model.intelligenceScore}
+                  scoreBasis={model.scoreBasis}
+                />
               </div>
             </div>
 
