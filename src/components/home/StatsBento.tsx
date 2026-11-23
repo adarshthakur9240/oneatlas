@@ -1,5 +1,5 @@
 // src/components/home/StatsBento.tsx
-// Warm cream hero stats card matching oneatlas.dev design language
+// Warm cream hero stats card matching design language
 
 import { formatNumber } from "@/lib/formatters";
 import type { StatsDto } from "@/types/api";

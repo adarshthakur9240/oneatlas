@@ -12,6 +12,8 @@ import { LabAvatar } from "@/components/ui/LabAvatar";
 import { NotFoundError } from "@/lib/api-response";
 import { Globe, ArrowRight } from "lucide-react";
 
+import { getBaseUrl } from "@/lib/url";
+
 interface ProviderPageProps {
   params: Promise<{ slug: string }>;
 }
@@ -32,13 +34,18 @@ export async function generateMetadata({
 
   const title = `${provider.name} Inference Hosting & Model Endpoints | OneAtlas`;
   const description = `Inspect ${provider.name}'s ${provider.hostedModelCount} hosted model endpoints, pricing, latency, and throughput on OneAtlas.`;
+  const canonicalUrl = `${getBaseUrl()}/providers/${provider.slug}`;
 
   return {
     title,
     description,
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
       title,
       description,
+      url: canonicalUrl,
     },
   };
 }

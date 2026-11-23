@@ -1,9 +1,10 @@
 // src/app/sitemap.ts
 import type { MetadataRoute } from "next";
 import { prisma } from "@/lib/prisma";
+import { getBaseUrl } from "@/lib/url";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://oneatlas.dev";
+  const baseUrl = getBaseUrl();
 
   // Core static routes
   const routes: MetadataRoute.Sitemap = [

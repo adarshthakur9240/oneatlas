@@ -16,6 +16,8 @@ import { ModelRelated } from "@/components/models/ModelRelated";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { NotFoundError } from "@/lib/api-response";
 
+import { getBaseUrl } from "@/lib/url";
+
 interface ModelPageProps {
   params: Promise<{ slug: string }>;
 }
@@ -43,14 +45,19 @@ export async function generateMetadata({
 
   const title = `${titleName} by ${labName} — Specs, Pricing & Benchmarks | OneAtlas`;
   const description = `Compare ${titleName} (${labName}) inference endpoints across ${model.providerCount} providers. Pricing: ${priceText}, Context: ${formatContext(model.contextWindow)}. Benchmarks, latency & quickstart snippets.`;
+  const canonicalUrl = `${getBaseUrl()}/models/${model.slug}`;
 
   return {
     title,
     description,
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
       title,
       description,
       type: "article",
+      url: canonicalUrl,
     },
     twitter: {
       card: "summary_large_image",

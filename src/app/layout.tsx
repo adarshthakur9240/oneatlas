@@ -26,6 +26,8 @@ const mono = JetBrains_Mono({
   display: "swap",
 });
 
+import { getBaseUrl } from "@/lib/url";
+
 const serif = Newsreader({
   variable: "--font-serif",
   subsets: ["latin"],
@@ -34,7 +36,7 @@ const serif = Newsreader({
   display: "swap",
 });
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://oneatlas.dev";
+const appUrl = getBaseUrl();
 
 export const metadata: Metadata = {
   metadataBase: new URL(appUrl),
@@ -55,6 +57,9 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "OneAtlas Team" }],
   creator: "OneAtlas",
+  alternates: {
+    canonical: appUrl,
+  },
   openGraph: {
     type: "website",
     locale: "en_US",

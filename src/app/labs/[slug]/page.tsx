@@ -11,6 +11,8 @@ import { LabDetailClient } from "@/components/labs/LabDetailClient";
 import { NotFoundError } from "@/lib/api-response";
 import { Globe } from "lucide-react";
 
+import { getBaseUrl } from "@/lib/url";
+
 interface LabPageProps {
   params: Promise<{ slug: string }>;
 }
@@ -31,13 +33,18 @@ export async function generateMetadata({
 
   const title = `${lab.name} AI Models & Releases | OneAtlas`;
   const description = `Explore ${lab.name}'s AI model portfolio (${lab.models.length} models), release timeline, open-weights, and pricing benchmarks on OneAtlas.`;
+  const canonicalUrl = `${getBaseUrl()}/labs/${lab.slug}`;
 
   return {
     title,
     description,
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
       title,
       description,
+      url: canonicalUrl,
     },
   };
 }

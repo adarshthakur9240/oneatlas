@@ -1,8 +1,9 @@
 // src/app/robots.ts
 import type { MetadataRoute } from "next";
+import { getBaseUrl } from "@/lib/url";
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://oneatlas.dev";
+  const baseUrl = getBaseUrl();
   return {
     rules: {
       userAgent: "*",
